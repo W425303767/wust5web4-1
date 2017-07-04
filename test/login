@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+<meta content="text/html" charset="utf-8">
+<meta name="keywords" content="html,登入界面">
+<meta name="description" content="">
+<title>注册页面</title>
+
+<style type="text/css">
+    *{ margin:0px;padding:0px;}
+   
+	.login{
+		width:890px;height:298px;border:1px solid #000000;margin:0 auto;border-radius:3px;margin:60px auto;position:relative;background:#e8e8e8;
+		}
+	.login_left{
+		width:380px;height:300px;float:left;
+		}
+	.login_right{
+		width:400px;height:300px;float:right;font-size:12px;color:#999999;
+		}
+	.login_c{
+		width:320px;height:200px;position:absolute;top:20px;rigth:20px;
+		}
+	.user{
+		width:320px;height:64px;
+		}
+	.user_text{
+	width:320px;
+		}
+	.user_in{
+		width:282px;height:28px;line-hight:28px;border:1px solid #cccccc;
+		}
+	.userauto{
+	width:320px;height:30px;
+		}
+	.btn{
+		width:320px;height:52px;
+				}
+	.user_login{
+		width:307px;height:34px;border-radius:3px;cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+<!--div盒子-->
+   
+<div class="login">
+      <div class="login_left">
+         <img src="http://chuantu.biz/t5/125/1499181792x2728329167.jpg"  alt="登入图片" width="280" height="300"/>
+      </div>
+      
+      <div class="login_right">
+        <div class="login_c">
+          <div class="user">
+              <span>账号</span>
+              <div class="user_text">
+              <input type="text" class="user_in"/></div>
+           </div>
+           
+           
+       <div class="user">
+          <span>密码</span>
+          <div class="user_text">
+          <input type="password" class="user_in"/>
+          </div>
+      </div>
+      
+    <div class="userauto">
+      <input type="checkbox"><span>自动登入</span>
+       <input type="checkbox"><span>安全控件登入</span>
+        <a href="#">忘记密码？</a>
+     </div>
+     
+     <div class="btn">
+        <input type="button" value="登入" class="user_login">
+     </div>
+        </div>
+        
+       </div>
+      
+    
+</div>
+</body>
+</html>
