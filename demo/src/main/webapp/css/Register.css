@@ -1,0 +1,75 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: "Microsoft YaHei";
+}
+ul{
+    list-style: none;
+}
+textarea{
+    resize:none;
+    width: 250px;
+    height: 100px;
+}
+.main{
+    width: 1100px;
+    margin: 0 auto;
+}
+.header{
+    margin-top: 30px;
+}
+.content{
+    margin-top: 50px;
+}
+.content li{
+    margin-top: 10px;
+}
+.content input[type=text]{
+    width: 128px;
+    height: 22px;
+    position: relative;
+    top: -1px;
+}
+.content span{
+    width: 60px;
+    height: 30px;
+    line-height: 30px;
+    text-align: left;
+    display: inline-block;
+}
+.content .form1{
+    width: 550px;
+    float: left;
+}
+.content input[type=submit]{
+    margin-right: 30px;
+}
+.content input[type=submit],input[type=reset]{
+    cursor: pointer;
+    background:#0AC986;
+    width:60px;
+    height: 26px;
+    line-height: 26px;
+    font-size:14px;
+    color:#fff;
+    border:none;
+    border-radius:2px;
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+    outline: none;
+}
+.content input[type=submit]:hover,input[type=reset]:hover{
+    opacity:0.8;
+    filter(alpha=80);
+}
+.content .form2{
+    width: 550px;
+    float: right;
+}
+.footer{
+    clear: both;
+    margin-bottom: 20px;
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+}
