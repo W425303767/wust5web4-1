@@ -1,0 +1,115 @@
+*{
+	margin: 0;
+	padding: 0;
+	font-family:"Microsoft YaHei";
+}
+a{
+	text-decoration: none;
+	color: #000;
+}
+input,button{
+	outline: none;
+}
+.underline:hover{
+	text-decoration:underline;
+}
+body{
+	background-color: #f9f5ea;
+}
+.wrapper{
+	width: 1200px;
+	margin: 0 auto;
+}
+.pic{
+	width: 618px;
+	height: 520px;
+	background-image: url("http://d.hiphotos.baidu.com/image/pic/item/03087bf40ad162d9592627ba1bdfa9ec8b13cd48.jpg");
+	background-size:618px 520px;
+	margin-top: 30px;
+	margin-left: 50px;
+	float: left;
+}
+.login-form{
+	float: left;
+	height: 320px;
+	padding:50px 30px;
+	background:rgba(255,255,255,.6);
+	border-radius:22px;
+	-moz-border-radius:22px;
+	-webkit-border-radius:22px;
+	margin:60px auto;
+	margin-left: 150px;
+	box-shadow: 0px 0px 5px #aaa;
+}
+.login-form h1{
+	color:#0AC986;
+	font-size: 26px;
+	text-align:center;
+	line-height: 50px;
+}
+.form-group{
+	position: relative;
+	margin-top:27px;
+}
+.form-control{
+	width:289px;
+	height:42px;
+	text-indent: 1em;
+	background:#fff;
+	color:#666;
+	border: 2px solid #ccc;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+}
+.form-field{
+	margin-top: 25px;
+	font-size: 14px;
+}
+.form-field span{
+	position: relative;
+	top: -1px;
+}
+.form-field a{
+	text-decoration:none;
+    color:#0AC986;
+    text-align:right;
+    font-size:14px;
+    margin-left:143px;
+}
+.log-btn{
+	cursor: pointer;
+	background:#0AC986;
+	width:289px;
+	font-size:16px;
+	height:39px;
+	color:#fff;
+	border:none;
+	margin-top: 25px;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+}
+.log-btn:hover{
+	opacity:0.8;
+	filter(alpha=80);
+}
+.footer{
+    margin: 0 auto;
+    width: 980px;
+    line-height: 60px;
+    font-size: 12px;
+    color: #999;
+    text-align: center;
+    clear: both;
+}
+.footer a{
+	color: #999;
+}
+.error1,.error2,.null1,.null2,.num{
+	color: #666;
+	font-size: 12px;
+	font-weight: bold;
+	position: absolute;
+	display: none;
+}
