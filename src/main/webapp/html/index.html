@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="../css/index.css">
+</head>
+<body>
+	<div class="header">
+		<div class="main">
+			<div class="desc">
+				<img src="../img/logo.png" alt="" width="60px">
+				<p>武汉科技大学宿舍管理系统</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="content">
+		<div class="treebox">
+			<ul class="menu">
+				<li class="level1">
+					<a href="#none">平时<i class="down"></i></a>
+					<ul class="level2">
+						<li class="level1"><a href="">新人注册</a></li>
+						<li class="level1">
+							<a href="#none">查寝<i class="down"></i></a>
+							<ul class="level2">
+								<li><a href="javascript:;">查卫生</a></li>
+								<li><a href="javascript:;">查电器</a></li>
+							</ul>
+						</li>
+						<li class="level1"><a href="">充值</a></li>
+						<li class="level1"><a href="">报修</a></li>
+			             <li class="level1"><a href="">防盗</a></li>
+					</ul>
+				</li>
+
+				<li class="level1">
+					<a href="#none">应急<i class="down"></i></a>
+					<ul class="level2">
+						<li class="level1"><a href="">毕业退寝</a></li>
+						<li class="level1"><a href="">放假调寝</a></li>
+						<li class="level1"><a href="">申请换寝</a></li>
+						<li class="level1">
+							<a href="#none">应急<i class="down"></i></a>
+							<ul class="level2">
+								<li><a href="javascript:;">钥匙丢失</a></li>
+								<li><a href="javascript:;">火灾逃生</a></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	
+
+<script src="../js/jquery-1.11.3.js"></script>
+<script src="../js/easing.js"></script>
+<script>
+	$(function(){
+		$(".treebox .level1>a").click(function(){
+			$(this).addClass('current')   //给当前元素添加"current"样式
+			.find('i').addClass('down')   //小箭头向下样式
+			.parent().next().slideDown('slow','easeOutQuad')  //下一个元素显示
+			.parent().siblings().children('a').removeClass('current')//父元素的兄弟元素的子元素去除"current"样式
+			.find('i').removeClass('down').parent().next().slideUp('slow','easeOutQuad');//隐藏
+			 return false; //阻止默认时间
+		});
+	})
+</script>	
+</body>
+</html>
