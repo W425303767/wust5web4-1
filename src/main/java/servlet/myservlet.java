@@ -26,7 +26,7 @@ public class myservlet extends HttpServlet {
 		
 		if(username.equals("12345")&&psw.equals("123456"))
 		{
-			out.println("Welcome "+username);
+			out.print("success");
 			out.flush();
 			out.close();
 		}
@@ -36,7 +36,8 @@ public class myservlet extends HttpServlet {
 			out.println("<HTML>");
 			out.println("  <HEAD><TITLE>A Servlet</TITLE></HEAD>");
 			out.println("  <BODY>");
-			out.print("    error: your username "+ username+" or password is wrong"+psw);
+			out.println("	error:your username or password may bu wrong!");
+			out.println("    error: your print username is"+ username+"  password is "+psw);
 			out.println("  </BODY>");
 			out.println("</HTML>");
 			out.flush();

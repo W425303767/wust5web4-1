@@ -26,6 +26,8 @@ function get(){
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 		{
+		  	if(xmlhttp.responseText=="success")
+		  		window.location="http://localhost:8080/wust5web4-1/html/index.html";
 			document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
 		}
 	  }	
@@ -44,6 +46,7 @@ function post(){
 		{
 			document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
 		}
+	  
 	  }	
 	xmlhttp.open("POST","/servlet/Test",true);
 	xmlhttp.send("fname=Bill&lname=Gates");
