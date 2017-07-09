@@ -1,10 +1,10 @@
 /**
  * This is package the XMLHTTP project
  */
-var image={"fname" : "Bill","lname":Gates}
+function createxmlhttp(){
 
-function get(){
 	var xmlhttp;
+	
 	if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
 	  xmlhttp=new XMLHttpRequest();
 	  }
@@ -12,7 +12,16 @@ function get(){
 	  {// code for IE6, IE5
 	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
 	  }
+	
+	return xmlhttp;
+}
 
+function get(){
+
+	var username = document.getElementById("user");
+	var psw = document.getElementById("psw");
+	var xmlhttp =createxmlhttp();
+	  
 	xmlhttp.onreadystatechange=function()
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
@@ -20,23 +29,15 @@ function get(){
 			document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
 		}
 	  }	
-	  var username = document.getElementById("user");
-	  var psw = document.getElementById("psw");
-	xmlhttp.open("GET","/wust5web4-1/servlet/myservlet?username="+username.value+"&psw="+psw.value,true);
+    xmlhttp.open("GET","/wust5web4-1/servlet/myservlet?username="+username.value+"&psw="+psw.value,true);
 	xmlhttp.send();
 }
 
 
 function post(){
-	var xmlhttp;
-	if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
-	  xmlhttp=new XMLHttpRequest();
-	  }
-	else
-	  {// code for IE6, IE5
-	  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-	  }
-
+	
+	var xmlhttp=createxmlhttp();
+	
 	xmlhttp.onreadystatechange=function()
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
@@ -45,7 +46,25 @@ function post(){
 		}
 	  }	
 	xmlhttp.open("POST","/servlet/Test",true);
-	xmlhttp.send();
-	xmlhttp.setRequestHeader("Content-type",application/x-www-form-urlencoded);
 	xmlhttp.send("fname=Bill&lname=Gates");
+}
+
+function getinfo(){
+	
+	var xmlhttp = createxmlhttp();
+	var year =document.getElementById("year").value.toString();
+	var where = document.getElementById("where").selectedIndex;
+	var num = document.getElementById("num").value;
+
+	
+	xmlhttp.onreadystatechange=function()
+	  {
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		{
+			document.getElementById("numlist").innerHTML=xmlhttp.responseText;
+		}
+	  }
+    xmlhttp.open("post","/wust5web4-1/servlet/Registe?year="+year+"&where="+where+"&num="+num,true);
+	xmlhttp.send();
+	
 }

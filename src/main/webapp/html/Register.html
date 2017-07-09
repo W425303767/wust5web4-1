@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Register</title>
     <link rel="stylesheet" href="../css/Register.css">
+    <script src="../js/xmlhttp.js"></script>
 </head>
 <body>
     <div class="header">
@@ -24,13 +25,13 @@
                 <li>
                     <label>
                         <span>年份</span>
-                        <input type="date">
+                        <input type="date" id="year">
                     </label>
                 </li>
                 <li>
                     <label>
                         <span>学院</span>
-                        <select>
+                        <select id="where">
                             <option>计算机学院</option>
                             <option>其他学院</option>
                         </select>
@@ -39,15 +40,15 @@
                 <li>
                     <label>
                         <span>人数</span>
-                        <input type="text">
+                        <input type="text" id="num">
                     </label>
                 </li>
                 <li>
-                    <input type="submit" value="获取ID">
+                    <input type="button" value="获取ID" onclick="getinfo()" />
                     <input type="reset">
                 </li>
                 <li>
-                    <textarea></textarea>
+                    <textarea id="numlist"></textarea>
                 </li>
             </ul>
         </div>

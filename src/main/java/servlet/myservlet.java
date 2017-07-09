@@ -23,6 +23,7 @@ public class myservlet extends HttpServlet {
 		String username = req.getParameter("username");
 		String psw = req.getParameter("psw");
 		//print jsom //print html 
+		
 		if(username.equals("12345")&&psw.equals("123456"))
 		{
 			out.println("Welcome "+username);
@@ -45,8 +46,8 @@ public class myservlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		super.doPost(req, resp);
+		
+		
 	}
 
 	@Override
