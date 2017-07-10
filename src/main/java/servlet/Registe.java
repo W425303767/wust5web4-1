@@ -88,7 +88,7 @@ public class Registe extends HttpServlet {
 		{
 			String stunum = year+whereid+""+(i+1);
 			JSONObject StuNo =new JSONObject();
-			StuNo.put("学院",where);
+			StuNo.put("where",where);
 			StuNo.put("StuNo",stunum);
 			out.println(StuNo);
 		}

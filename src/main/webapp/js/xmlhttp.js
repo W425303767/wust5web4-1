@@ -54,17 +54,20 @@ function post(){
 
 function getinfo(){
 	
+	var message={'where':'','StuNo':''};
 	var xmlhttp = createxmlhttp();
 	var year =document.getElementById("year").value.toString();
 	var where = document.getElementById("where").selectedIndex;
 	var num = document.getElementById("num").value;
-
+	
 	
 	xmlhttp.onreadystatechange=function()
 	  {
+		
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 		{
-			document.getElementById("numlist").innerHTML=xmlhttp.responseText;
+			message=JSON.parse(xmlhttp.responseText);
+			document.getElementById("numlist").innerHTML=message.where+message.StuNo;
 		}
 	  }
     xmlhttp.open("post","/wust5web4-1/servlet/Registe?year="+year+"&where="+where+"&num="+num,true);
