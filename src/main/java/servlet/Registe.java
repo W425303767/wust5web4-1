@@ -70,6 +70,7 @@ public class Registe extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		
+		JSONArray  message= new JSONArray();
 		String year =request.getParameter("year");
 		String whereid = request.getParameter("where");
 		String num = request.getParameter("num");
@@ -90,9 +91,10 @@ public class Registe extends HttpServlet {
 			JSONObject StuNo =new JSONObject();
 			StuNo.put("where",where);
 			StuNo.put("StuNo",stunum);
-			out.println(StuNo);
+			message.put(StuNo);
 		}
-
+		
+		out.print(message.toString());
 		out.flush();
 		out.close();
 	}

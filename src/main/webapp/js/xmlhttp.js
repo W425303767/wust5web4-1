@@ -64,10 +64,13 @@ function getinfo(){
 	xmlhttp.onreadystatechange=function()
 	  {
 		
+		
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 		{
+		    //document.getElementById("numlist").innerHTML=eval(xmlhttp.responseText);
 			message=JSON.parse(xmlhttp.responseText);
-			document.getElementById("numlist").innerHTML=message.where+message.StuNo;
+			for(var i=0;i<message.length;i++)
+			document.getElementById("numlist").innerHTML+=message[i].where+message[i].StuNo+"\n";
 		}
 	  }
     xmlhttp.open("post","/wust5web4-1/servlet/Registe?year="+year+"&where="+where+"&num="+num,true);
