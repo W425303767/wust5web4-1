@@ -64,7 +64,6 @@ function getinfo(){
 	xmlhttp.onreadystatechange=function()
 	  {
 		
-		
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 		{
 		    //document.getElementById("numlist").innerHTML=eval(xmlhttp.responseText);
@@ -74,6 +73,21 @@ function getinfo(){
 		}
 	  }
     xmlhttp.open("post","/wust5web4-1/servlet/Registe?year="+year+"&where="+where+"&num="+num,true);
+	xmlhttp.send();
+	
+}
+
+function connDB(){
+	
+	var xmlhttp = createxmlhttp();
+	xmlhttp.onreadystatechange=function()
+	{
+		if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		{
+			document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+		}
+	}
+    xmlhttp.open("get","/wust5web4-1/servlet/Test",true);
 	xmlhttp.send();
 	
 }
