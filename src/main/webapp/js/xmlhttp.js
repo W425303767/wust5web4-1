@@ -39,7 +39,8 @@ function get(){
 function post(){
 	
 	var xmlhttp=createxmlhttp();
-	
+	var username = document.getElementById("user");
+	var psw = document.getElementById("psw");
 	xmlhttp.onreadystatechange=function()
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
@@ -48,8 +49,8 @@ function post(){
 		}
 	  
 	  }	
-	xmlhttp.open("POST","/servlet/Test",true);
-	xmlhttp.send("fname=Bill&lname=Gates");
+	xmlhttp.open("GET","/wust5web4-1/servlet/Test?username="+username.value,true);
+	xmlhttp.send();
 }
 
 function getinfo(){
@@ -72,7 +73,7 @@ function getinfo(){
 			document.getElementById("numlist").innerHTML+=message[i].where+message[i].StuNo+"\n";
 		}
 	  }
-    xmlhttp.open("post","/wust5web4-1/servlet/Registe?year="+year+"&where="+where+"&num="+num,true);
+    xmlhttp.open("POST","/wust5web4-1/servlet/Registe?year="+year+"&where="+where+"&num="+num,true);
 	xmlhttp.send();
 	
 }
