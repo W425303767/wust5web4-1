@@ -3,21 +3,34 @@
  */
 
 $(document).ready(function(){
-	console.log("laile");
-	$('#exmaple2').DataTable({
+	
+	
+	/*$('#example2').DataTable({
 		"processing": true,
         "serverSide": true,
-        "ajax": "/servlet/index1",
+        "ajax": "../../../servlet/index1",
         "columns": [
-            { "data": "first_name" },
-            { "data": "last_name" },
-            { "data": "position" },
-            { "data": "office" },
-            { "data": "start_date" },
-            { "data": "salary" }
+            { "data": "Id" },
+            { "data": "CourseName" },
+            { "data": "Teacher" },
+            { "data": "ClassRoom" },
+            { "data": "Time" },
+            { "data": "classIntroduce" }
+        ]
+	
+	})*/
+	$('#example2').DataTable({
+		"processing": true,
+        "serverSide": true,
+        "ajax": "../../../servlet/index1",
+        "columns": [
+            { "data": "buildnum" },
+            { "data": "housenum" },
+            { "data": "members" },
+            { "data": "grades" },
+            { "data": "cherker" },
+            { "data": "time" }
         ]
 	
 	})
-	console.log($('#exmaple2'));
-	console.log("go");
 });
