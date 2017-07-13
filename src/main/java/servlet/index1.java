@@ -13,9 +13,6 @@ import javax.xml.crypto.Data;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import Model.Course;
-import Model.CourseDao;
-import Model.dormitory;
 import Model.returndata;
 
 public class index1 extends HttpServlet {

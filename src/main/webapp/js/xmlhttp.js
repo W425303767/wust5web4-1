@@ -27,11 +27,11 @@ function get(){
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 		{
 		  	if(xmlhttp.responseText=="success")
-		  		window.location="http://localhost:8080/wust5web4-1/html/index.html";
+		  		window.location="http://localhost:8080/wust5web4-1/html/index1.html";
 			document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
 		}
 	  }	
-    xmlhttp.open("GET","/wust5web4-1/servlet/myservlet?username="+username.value+"&psw="+psw.value,true);
+    xmlhttp.open("POST","/wust5web4-1/servlet/myservlet?username="+username.value+"&psw="+psw.value,true);
 	xmlhttp.send();
 }
 
@@ -49,7 +49,7 @@ function post(){
 		}
 	  
 	  }	
-	xmlhttp.open("GET","/wust5web4-1/servlet/Test?username="+username.value,true);
+	xmlhttp.open("GET","/wust5web4-1/servlet/Test?username="+username.value+"&password="+psw.value,true);
 	xmlhttp.send();
 }
 
@@ -74,21 +74,6 @@ function getinfo(){
 		}
 	  }
     xmlhttp.open("POST","/wust5web4-1/servlet/Registe?year="+year+"&where="+where+"&num="+num,true);
-	xmlhttp.send();
-	
-}
-
-function connDB(){
-	
-	var xmlhttp = createxmlhttp();
-	xmlhttp.onreadystatechange=function()
-	{
-		if (xmlhttp.readyState==4 && xmlhttp.status==200)
-		{
-			document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
-		}
-	}
-    xmlhttp.open("get","/wust5web4-1/servlet/Test",true);
 	xmlhttp.send();
 	
 }
