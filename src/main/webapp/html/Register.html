@@ -4,94 +4,79 @@
     <meta charset="UTF-8">
     <title>Register</title>
     <link rel="stylesheet" href="../css/Register.css">
-    <script src="../js/xmlhttp.js"></script>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <script rel="stylesheet" src="../js/jquery-1.11.3.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/register.js"></script>
 </head>
 <body>
-    <div class="header">
-        <div class="main">
-            <h2>This is Register Demo!</h2>
-            <p>The super host can use this page ! Every year he must make sure the numbers of
-            freshman and register their StuNumber.At the same time ,he can create hostel managers'
-                numbers.
-            </p>
-        </div>
-    </div>
-   
-   <div class="content">
-       <div class="main">
-        <div class="form1">
-            <h3>This is StuNo</h3>
-            <ul>
-                <li>
-                    <label>
-                        <span>年份</span>
-                        <input type="date" id="year">
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        <span>学院</span>
-                        <select id="where">
-                            <option>计算机学院</option>
-                            <option>其他学院</option>
-                        </select>
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        <span>人数</span>
-                        <input type="text" id="num">
-                    </label>
-                </li>
-                <li>
-                    <input type="button" value="获取ID" onclick="getinfo()" />
-                    <input type="reset">
-                </li>
-                <li>
-                    <textarea id="numlist"></textarea>
-                </li>
+<div class="page-header">
+    <h1>寝室管理系统注册</h1>
+</div>
+
+<div class="container">
+    <div class="col-lg-offset-4 col-lg-4">
+        <div class="reg_border">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#students" aria-controls="students" role="tab" data-toggle="tab">学生</a></li>
+                <li role="presentation"><a href="#manage" aria-controls="manage" role="tab" data-toggle="tab">管理</a></li>
             </ul>
-        </div>
-        <div class="form2">
-            <h2>This is ManagerNo</h2>
-            <ul>
-                <li>
-                    <label>
-                        <span>年份</span>
-                        <input type="date">
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        <span>部门</span>
-                        <select>
-                            <option>宿管</option>
-                            <option>维修</option>
-                            <option>充值</option>
-                        </select>
-                    </label>
-                </li>
-                <li>
-                    <label>
-                        <span>人数</span>
-                        <input type="text">
-                    </label>
-                </li>
-                <li>
-                    <input type="submit" value="获取ID" id="test">
-                    <input type="reset">
-                </li>
-                <li><textarea></textarea></li>
-            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade active form_margin" id="students">
+                    <form class="form-horizontal" onsubmit="return check1();">
+                        <div class="form-group">
+                            <label for="academy" class="col-md-3 control-label">学院</label>
+                            <div class="col-md-8" >
+                                <select class="form-control" id="academy">
+                                    <option>&#45;&#45;&#45;&#45;请选择学院&#45;&#45;&#45;&#45;</option>
+                                    <option>计算机学院</option>
+                                    <option>外国语学院</option>
+                                    <option>艺术与设计学院</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="num_stu" class="col-md-3 control-label">人数</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" id="num_stu">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-4 col-md-4">
+                                <button type="submit" class="btn btn-info btn-lg" id="stu_sure">确认</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div role="tabpane2" class="tab-pane fade form_margin" id="manage">
+                    <form class="form-horizontal" onsubmit="return check2">
+                        <div class="form-group">
+                            <label for="position" class="col-md-3 control-label">职位</label>
+                            <div class="col-md-8">
+                                <select class="form-control" id="position">
+                                    <option>&#45;&#45;&#45;&#45;请选择职位&#45;&#45;&#45;&#45;</option>
+                                    <option>宿管</option>
+                                    <option>后勤</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="num_manage" class="col-md-3 control-label">人数</label>
+                            <div class="col-md-8">
+                                <input type="password" class="form-control" id="num_manage">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-offset-4 col-md-4">
+                                <button type="submit" class="btn btn-info btn-lg" id="manage_sure">确认</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-   </div>
-    
-    <div class="footer">
-        <div class="main">
-            <p>This is end of page! Create by Group5</p>
-        </div>
-    </div>
-    
+</div>
+
 </body>
 </html>
