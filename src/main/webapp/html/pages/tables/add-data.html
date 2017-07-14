@@ -30,6 +30,12 @@
   <!-- Google Font -->
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+  <style>
+    input[type=text]{
+      width: 130px;
+    }
+  </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -424,13 +430,12 @@
       <h1>
         <small>查卫生</small>
       </h1>
-      <button type="button" class="btn btn-info"><a href="add-data.html" style="color:#fff">添加信息</a></button>
       <ol class="breadcrumb">
         <li><a href="#">查寝</a></li>
-        <li class="active">查卫生</li>
+        <li class="active">添加信息</li>
       </ol>
     </section>
-  
+
     <!-- Main content -->
     <section class="content">
       <div class="row">
@@ -453,128 +458,17 @@
                 </tr>  
                 </thead>
                 <tbody>
-                <tr>    
-                  <td>S2</td>
-                  <td>601</td>
-                  <td>Sam、Taylor、Tony、Zachary</td>
-                  <td>89</td>
-                  <td>Lynn</td>
-                  <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S3</td>
-                    <td>301</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S8</td>
-                    <td>201</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S6</td>
-                    <td>611</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S9</td>
-                    <td>211</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S6</td>
-                    <td>101</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>   
-                <tr>    
-                    <td>S4</td>
-                    <td>209</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S9</td>
-                    <td>710</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S3</td>
-                    <td>521</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S3</td>
-                    <td>413</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S5</td>
-                    <td>111</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S1</td>
-                    <td>411</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>  
-                <tr>    
-                    <td>S9</td>
-                    <td>116</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S7</td>
-                    <td>511</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S1</td>
-                    <td>517</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>      
+                  <tr>
+                    <td><input type="text" placeholder="格式：S1"></td>
+                    <td><input type="text" placeholder="格式：601"></td>
+                    <td><textarea rows="3" cols="20"></textarea></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text" placeholder="格式：2017-7-14"></td>
+                  </tr>
                </tfoot>
               </table>
+              <button type="button" class="btn btn-info">提交</button>
             </div>
             <!-- /.box-body -->
           </div>
@@ -582,7 +476,7 @@
 
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title">南苑</h3>
+              <h3 class="box-title">北苑</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
@@ -598,128 +492,17 @@
                 </tr>  
                 </thead>
                 <tbody>
-                <tr>    
-                  <td>S2</td>
-                  <td>601</td>
-                  <td>Sam、Taylor、Tony、Zachary</td>
-                  <td>89</td>
-                  <td>Lynn</td>
-                  <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S3</td>
-                    <td>301</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S8</td>
-                    <td>201</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S6</td>
-                    <td>611</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S9</td>
-                    <td>211</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S6</td>
-                    <td>101</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>   
-                <tr>    
-                    <td>S4</td>
-                    <td>209</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S9</td>
-                    <td>710</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S3</td>
-                    <td>521</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S3</td>
-                    <td>413</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S5</td>
-                    <td>111</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S1</td>
-                    <td>411</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>  
-                <tr>    
-                    <td>S9</td>
-                    <td>116</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S7</td>
-                    <td>511</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>    
-                <tr>    
-                    <td>S1</td>
-                    <td>517</td>
-                    <td>Sam、Taylor、Tony、Zachary</td>
-                    <td>89</td>
-                    <td>Lynn</td>
-                    <td>2017-3-20</td>
-                </tr>      
+                  <tr>
+                    <td><input type="text" placeholder="格式：N1"></td>
+                    <td><input type="text" placeholder="格式：601"></td>
+                    <td><textarea rows="3" cols="20"></textarea></td>
+                    <td><input type="text"></td>
+                    <td><input type="text"></td>
+                    <td><input type="text" placeholder="格式：2017-7-14"></td>
+                  </tr>
                </tfoot>
               </table>
+              <button type="button" class="btn btn-info">提交</button>
             </div>
             <!-- /.box-body -->
           </div>
