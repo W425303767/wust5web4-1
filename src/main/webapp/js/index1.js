@@ -1,9 +1,6 @@
-/**
- * 
- */
+
 
 $(document).ready(function(){
-	
 	
 	$('#example2').DataTable({
 		"processing": true,

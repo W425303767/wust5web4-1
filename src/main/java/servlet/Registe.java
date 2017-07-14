@@ -17,6 +17,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.json.*;
 
 public class Registe extends HttpServlet {
@@ -81,7 +83,7 @@ public class Registe extends HttpServlet {
 		response.setContentType("text/html");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
-		
+		HttpSession session = request.getSession();
 		
 		JSONArray  message= new JSONArray();
 		String year =request.getParameter("year");
@@ -107,6 +109,7 @@ public class Registe extends HttpServlet {
 			StuNo.put("StuNo",stunum);
 			message.put(StuNo);
 			save(where,stunum);
+			session.setAttribute("username", StuNo);
 		}
 		
 		out.println(message.toString());

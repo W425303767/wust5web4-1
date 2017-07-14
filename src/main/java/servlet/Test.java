@@ -59,12 +59,7 @@ public class Test extends HttpServlet {
 			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true", props); 
 			out.println("create and connect to wust5DB"); 
 			
-			// create a table and insert two records 
 			s = conn.createStatement(); 
-			//s.execute("drop table testtable");
-			/*s.execute("create table testtable(place varchar(40), StuNo varchar(10),Psw varchar(20))"); 
-			s.execute("insert into testtable values ('2','2','2')");
-			s.execute("insert into testtable values ('1','1','1')");*/
 			
 			// list the two records 
 			ResultSet rs = s.executeQuery( 
@@ -73,7 +68,6 @@ public class Test extends HttpServlet {
 			while(rs.next()) { 
 				StringBuilder builder = new StringBuilder(rs.getString(2)); 
 				builder.append(rs.getInt(3));
-				//builder.append(rs.getInt(3));
 				out.println(builder.toString()); 
 				} 
 			

@@ -7,6 +7,8 @@ import org.json.JSONArray;
 public class returndata {
 
 	//public ArrayList <dormitory> data=new ArrayList<dormitory>();
-	
+	/*public int draw;
+	public int recordTotal;
+	public int recordsFiltered;*/
 	public JSONArray data = new JSONArray();
 }

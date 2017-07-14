@@ -1,0 +1,31 @@
+*，body{
+    margin: 0;
+    padding: 0;
+    font-family: "Microsoft YaHei";
+}
+body{
+    background: url("../img/图片1.jpg") no-repeat;
+}
+label{
+    color:white;
+}
+.page-header h1{
+    text-align: center;
+    color: white;
+}
+.page-header{
+    border-bottom:none!important;
+}
+.tab-content{
+    border: 1px solid #DDDDDD;
+    border-top:none;
+    -webkit-border-radius:0 0 10px 10px;
+    -moz-border-radius:0 0 10px 10px;
+    border-radius:0 0 10px 10px;
+}
+.form_margin {
+    padding-top: 27px;
+}
+#stu_sure,#manage_sure{
+    width:120px;
+}

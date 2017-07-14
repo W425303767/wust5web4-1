@@ -67,7 +67,7 @@ function getinfo(){
 		
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 		{
-		    //document.getElementById("numlist").innerHTML=eval(xmlhttp.responseText);
+		  
 			message=JSON.parse(xmlhttp.responseText);
 			for(var i=0;i<message.length;i++)
 			document.getElementById("numlist").innerHTML+=message[i].where+message[i].StuNo+"\n";
@@ -77,3 +77,29 @@ function getinfo(){
 	xmlhttp.send();
 	
 }
+
+function StuSend(){
+	
+	var message={'where':'','StuNo':''};
+	var xmlhttp = createxmlhttp();
+	var year =new Date().toLocaleDateString();
+	var where = document.getElementById("academy").selectedIndex;
+	var num = document.getElementById("num_stu").value;
+	
+	
+	xmlhttp.onreadystatechange=function()
+	  {
+		
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		{
+		  if(xmlhttp.responseText=="success")
+		  		window.location="http://localhost:8080/wust5web4-1/html/";
+			/*message=JSON.parse(xmlhttp.responseText);
+			for(var i=0;i<message.length;i++)
+			document.getElementById("numlist").innerHTML+=message[i].where+message[i].StuNo+"\n";*/
+		}
+	  }
+    xmlhttp.open("POST","/wust5web4-1/servlet/Registe?year="+year+"&where="+where+"&num="+num,true);
+	xmlhttp.send();
+	
+	}
