@@ -8,6 +8,7 @@
     <script rel="stylesheet" src="../js/jquery-1.11.3.js"></script>
     <script src="../js/bootstrap.min.js"></script>
     <script src="../js/register.js"></script>
+    <script src="../js/xmlhttp.js"></script>
 </head>
 <body>
 <div class="page-header">
@@ -43,7 +44,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-md-offset-4 col-md-4">
-                                <button type="submit" class="btn btn-info btn-lg" id="stu_sure">确认</button>
+                                <button type="button" onclick="StuSend()" class="btn btn-info btn-lg" id="stu_sure">确认</button>
                             </div>
                         </div>
                     </form>
@@ -68,7 +69,7 @@
                         </div>
                         <div class="form-group">
                             <div class="col-md-offset-4 col-md-4">
-                                <button type="submit" class="btn btn-info btn-lg" id="manage_sure">确认</button>
+                                <button type="button" onclick="MangSend()" class="btn btn-info btn-lg" id="manage_sure">确认</button>
                             </div>
                         </div>
                     </form>

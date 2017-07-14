@@ -58,45 +58,20 @@
           <div class="box">
             <!-- /.box-header -->
             <div class="box-body">
-              <table id="example2" class="table table-bordered table-hover">
+              <table id="messages" class="table table-bordered table-hover">
                 <thead>
                 <tr>
-                  <th>编号</th>
-                  <th>账号</th>
                   <th>学院</th>
+                  <th>账号</th>
+                  <th>密码</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>201513137131</td>
-                  <td>计算机学院</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>201513137131</td>
-                  <td>计算机学院</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>201513137131</td>
-                  <td>计算机学院</td>
-                </tr>
-                </tbody>
               </table>
             </div>
-            <!-- /.box-body -->
           </div>
-          <!-- /.box -->
-
-
-          <!-- /.box -->
         </div>
-        <!-- /.col -->
       </div>
-      <!-- /.row -->
     </section>
-    <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
 
@@ -275,7 +250,6 @@
               <input type="checkbox" class="pull-right">
             </label>
           </div>
-          <!-- /.form-group -->
 
           <div class="form-group">
             <label class="control-sidebar-subheading">
@@ -283,18 +257,12 @@
               <a href="javascript:void(0)" class="text-red pull-right"><i class="fa fa-trash-o"></i></a>
             </label>
           </div>
-          <!-- /.form-group -->
         </form>
       </div>
-      <!-- /.tab-pane -->
     </div>
   </aside>
-  <!-- /.control-sidebar -->
-  <!-- Add the sidebar's background. This div must be placed
-       immediately after the control sidebar -->
-  <div class="control-sidebar-bg"></div>
 </div>
-<!-- ./wrapper -->
+
 
 <!-- jQuery 3 -->
 <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
@@ -312,11 +280,10 @@
 <!-- AdminLTE for demo purposes -->
 <script src="../../dist/js/demo.js"></script>
 <!-- page script -->
-<script src="../../../js/index1.js"></script>
+<script src="../../../js/formdata.js"></script>
 <script>
   $(function () {
-    $('#example1').DataTable()
-    $('#example2').DataTable({
+    $('#messages').DataTable({
       'paging'      : true,
       'lengthChange': false,
       'searching'   : false,

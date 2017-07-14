@@ -1,18 +1,4 @@
-<<<<<<< HEAD
-$(document).ready(function () {
-    $("#academy").change(function () {
-        $("#academy option").each(function (i,o) {
-            if($(this).attr("selected")){
-                $(".major").hide();
-                $(".major").eq(i).show();
-            }
-        });
-    });
-    $("#academy").change();
-=======
-/**
- * Created by 涵小庆 on 2017/7/13.
- */
+
 $(document).ready(function () {
     /*$("#academy").change(function () {
      $("#academy option").each(function (i,o) {
@@ -58,5 +44,5 @@ $(document).ready(function () {
             }
         });
     }
->>>>>>> f80ed411640e9999a1beab73e9e5ac2d1bd832bb
+
 });

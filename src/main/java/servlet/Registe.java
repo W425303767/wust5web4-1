@@ -54,16 +54,44 @@ public class Registe extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		response.setContentType("text/html");
+		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
-		out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
-		out.println("<HTML>");
-		out.println("  <HEAD><TITLE>A Servlet</TITLE></HEAD>");
-		out.println("  <BODY>");
-		out.print("    This is ");
-		out.print(this.getClass());
-		out.println(", using the GET method");
-		out.println("  </BODY>");
-		out.println("</HTML>");
+		HttpSession session = request.getSession();
+		boolean flag=false;
+		JSONArray  message= new JSONArray();
+		String year =request.getParameter("year");
+		String whereid = request.getParameter("where");
+		String num = request.getParameter("num");
+		String where="";
+		
+		int nownum=0;
+		for(int i=0;i<num.length();i++)
+			nownum = nownum*10+(num.charAt(i)-'0');
+		
+		if(whereid.equals("1"))
+			where="计算机学院";
+		if(whereid.equals("2"))
+			where="外国语学院";
+		if(whereid.equals("3"))
+			where="其他学院";
+		
+		
+		for(int i=0;i<nownum;i++)
+		{
+			String stunum = year+whereid+(i+1);
+			JSONObject StuNo =new JSONObject();
+			StuNo.put("where",where);
+			StuNo.put("StuNo",stunum);
+			message.put(StuNo);
+			save(where,stunum);
+			session.setAttribute("username", StuNo);
+			flag= true;
+		}
+		
+		if(flag)
+		out.print("success");
+		else
+		out.print("failed");
 		out.flush();
 		out.close();
 	}
@@ -94,10 +122,12 @@ public class Registe extends HttpServlet {
 		int newnum=0;
 		for(int i=0;i<num.length();i++)
 			newnum = newnum*10+(num.charAt(i)-'0');
-		year=year.replace("-", "");
-		if(whereid.equals("0"))
-			where="计算机学院";
+		
 		if(whereid.equals("1"))
+			where="计算机学院";
+		if(whereid.equals("2"))
+			where="外国语学院";
+		if(whereid.equals("3"))
 			where="其他学院";
 		
 		
@@ -110,6 +140,7 @@ public class Registe extends HttpServlet {
 			message.put(StuNo);
 			save(where,stunum);
 			session.setAttribute("username", StuNo);
+			
 		}
 		
 		out.println(message.toString());
@@ -196,5 +227,6 @@ public class Registe extends HttpServlet {
 				}
 		}
 	}
+	
 	
 }
