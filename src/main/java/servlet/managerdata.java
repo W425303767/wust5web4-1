@@ -7,7 +7,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -19,12 +18,12 @@ import org.json.JSONObject;
 
 import Model.returndata;
 
-public class formdata extends HttpServlet {
+public class managerdata extends HttpServlet {
 
 	/**
 		 * Constructor of the object.
 		 */
-	public formdata() {
+	public managerdata() {
 		super();
 	}
 
@@ -33,13 +32,6 @@ public class formdata extends HttpServlet {
 		super.init(config);
 		if(connDB()==false)
 			destroy();
-	}
-	/**
-		 * Destruction of the servlet. <br>
-		 */
-	public void destroy() {
-		super.destroy(); // Just puts "destroy" string in log
-		// Put your code here
 	}
 
 	/**
@@ -74,7 +66,7 @@ public class formdata extends HttpServlet {
 			while(rs.next()) { 
 				JSONObject message = new JSONObject();
 				StringBuilder builder = new StringBuilder(rs.getString("place")); 
-				if(rs.getString("checkid").contentEquals("1")){
+				if(rs.getString("checkid").contentEquals("2")){
 					message.put("place", builder.toString());
 					builder = new StringBuilder(rs.getString("StuNo"));
 					message.put("num", builder.toString());
@@ -116,7 +108,6 @@ public class formdata extends HttpServlet {
 		out.flush();
 		out.close();
 	
-		
 	}
 
 	/**

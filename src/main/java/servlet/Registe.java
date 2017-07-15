@@ -70,11 +70,11 @@ public class Registe extends HttpServlet {
 			nownum = nownum*10+(num.charAt(i)-'0');
 		
 		if(whereid.equals("1"))
-			where="计算机学院";
+			where="CS";
 		if(whereid.equals("2"))
-			where="外国语学院";
+			where="FL";
 		if(whereid.equals("3"))
-			where="其他学院";
+			where="Others";
 		
 		
 		for(int i=0;i<nownum;i++)
@@ -113,6 +113,8 @@ public class Registe extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		HttpSession session = request.getSession();
+		Connection conn = null; 
+		Statement s = null;
 		
 		JSONArray  message= new JSONArray();
 		boolean flag=false;
@@ -121,19 +123,54 @@ public class Registe extends HttpServlet {
 		String num = request.getParameter("num");
 		String checkid = request.getParameter("checkid");
 		String where="";
-		
+		String oldnum="";
+		int nums=0;
 		int nownum=0;
+		
 		for(int i=0;i<num.length();i++)
 			nownum = nownum*10+(num.charAt(i)-'0');
-
+		
+		
+		try { 
+			
+			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");  
+			s = conn.createStatement(); 
+			ResultSet rs =s.executeQuery("select count(*) from testtable");
+			
+			while(rs.next()) { 
+				oldnum = rs.getString(1);
+			} 
+			
+			for(int i=0;i<oldnum.length();i++)
+				nums = nums*10+(oldnum.charAt(i)-'0');
+			conn.commit(); 
+		   }catch (Exception e){
+			e.printStackTrace();
+		}finally{
+			if(null!=s)
+				try {
+					s.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			if( null != conn)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		
 		if(whereid.equals("1"))
-			where="宿管";
+			where="housemaster";
 		if(whereid.equals("2"))
-			where="后勤";
+			where="logistics";
 		
 		for(int i=0;i<nownum;i++)
 		{
-			String stunum = year+whereid+""+(i+1);
+			String stunum = year+whereid+""+(i+1+nums);
 			JSONObject StuNo =new JSONObject();
 			StuNo.put("where",where);
 			StuNo.put("StuNo",stunum);
@@ -170,7 +207,7 @@ public class Registe extends HttpServlet {
 		
 		s = conn.createStatement(); 
 		s.execute("drop table testtable");
-		s.execute("create table testtable(place varchar(40), StuNo char(10) ,Psw char(20),Checkid char)");		
+		s.execute("create table testtable(place char(40), StuNo char(10) ,Psw char(20),Checkid char)");		
 		return true;
 		
 		}catch(Exception e){

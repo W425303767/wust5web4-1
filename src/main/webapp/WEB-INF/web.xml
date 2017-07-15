@@ -39,6 +39,13 @@
     <servlet-name>recharge</servlet-name>
     <servlet-class>servlet.recharge</servlet-class>
   </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>managerdata</servlet-name>
+    <servlet-class>servlet.managerdata</servlet-class>
+  </servlet>
+
 
 
 
@@ -64,6 +71,10 @@
   <servlet-mapping>
     <servlet-name>recharge</servlet-name>
     <url-pattern>/servlet/recharge</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>managerdata</servlet-name>
+    <url-pattern>/servlet/managerdata</url-pattern>
   </servlet-mapping>
 
   
