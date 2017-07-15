@@ -29,3 +29,7 @@ label{
 #stu_sure,#manage_sure{
     width:120px;
 }
+.error,.error2{
+    color: #fff;
+    display: none;
+}

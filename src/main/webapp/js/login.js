@@ -43,7 +43,7 @@ $(function(){
 		}
 	});
 
-	$('form').submit(function(){
+	$('form').click(function(){
 		$('input.auth').blur();
 
 		tot=0;
