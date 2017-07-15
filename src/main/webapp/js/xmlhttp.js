@@ -99,14 +99,17 @@ function StuSend(){
 	xmlhttp.onreadystatechange=function()
 	  {
 		
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-		{
-		  if(xmlhttp.responseText=="success1")
-		  		window.location="../html/pages/tables/formdata.html";
-		}
-	  }
-    xmlhttp.open("GET","../servlet/Registe?year="+year+month+day+"&where="+where+"&num="+num+"&checkid=1",true);
-	xmlhttp.send();
+		
+			if (xmlhttp.readyState==4 && xmlhttp.status==200)
+			{
+			  if(xmlhttp.responseText=="success1")
+			  		window.location="../html/pages/tables/formdata.html";
+			}
+		  
+	    xmlhttp.open("GET","../servlet/Registe?year="+year+month+day+"&where="+where+"&num="+num+"&checkid=1",true);
+		xmlhttp.send();
+	}
+	  
 	
 }
 function ManagerSend(){
@@ -127,13 +130,14 @@ function ManagerSend(){
 	
 	xmlhttp.onreadystatechange=function()
 	  {
-		
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		if (xmlhttp.readyState==4 && xmlhttp.status==200)
 		{
 		  if(xmlhttp.responseText=="success2")
 		  		window.location="../html/pages/tables/managerdata.html";
 		}
-	  }
-  xmlhttp.open("POST","../servlet/Registe?year="+year+month+day+"&where="+where+"&num="+num+"&checkid=2",true);
+	}
+	
+	xmlhttp.open("POST","../servlet/Registe?year="+year+month+day+"&where="+where+"&num="+num+"&checkid=2",true);
 	xmlhttp.send();
+	  
 }

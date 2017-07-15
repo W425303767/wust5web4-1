@@ -73,7 +73,7 @@ public class myservlet extends HttpServlet {
 		else if(message.equals("success2"))
 			out.print("success2");
 		else
-			out.println(" error: your print username or password is wrong !");
+			out.println(" error: your print"+username+psw);
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class myservlet extends HttpServlet {
 		Connection conn = null;
 		Statement s =null;
 		String message=username+password;
-		
+		String flag="false";
 		try { 
 			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true"); 
 			s= conn.createStatement(); 
@@ -134,20 +134,15 @@ public class myservlet extends HttpServlet {
 						getmessage=builder.toString(); 
 						if(message.equals(getmessage)&&(rs.getString(4)).toString().equals("1"))
 						{
-							rs.close();
-							return "success1";
+							flag= "success1";
 						}
 						else if(message.equals(getmessage)&&(rs.getString(4)).toString().equals("2"))
 						{
-							rs.close();
-							return "success2";
+							flag= "success2";
 						}
-							
-					} 
-				
-					rs.close(); 
-					return "false";
-			
+					}
+			return flag;	
+
 		}catch (Exception e){
 			e.printStackTrace();
 			return "false";
