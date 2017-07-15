@@ -64,12 +64,15 @@ public class myservlet extends HttpServlet {
 		PrintWriter out = resp.getWriter();
 		String username = req.getParameter("username");
 		String psw = req.getParameter("psw");
+		String message =checkmessage(username,psw);
 		
-		if(checkmessage(username,psw)){
-			out.print("success");
+		if(message.equals("success1")){
+			out.print("success1");
 		}
 			
-		else 
+		else if(message.equals("success2"))
+			out.print("success2");
+		else
 			out.println(" error: your print username or password is wrong !");
 	}
 
@@ -113,7 +116,7 @@ public class myservlet extends HttpServlet {
 		return true;
 	}
 	
-	public boolean checkmessage(String username,String password){
+	public String checkmessage(String username,String password){
 		
 		Connection conn = null;
 		Statement s =null;
@@ -127,22 +130,27 @@ public class myservlet extends HttpServlet {
 					while(rs.next()) { 
 						String getmessage;
 						StringBuilder builder = new StringBuilder(rs.getString(2)); 
-						builder.append(rs.getInt(3)); 
+						builder.append(rs.getInt(3));
 						getmessage=builder.toString(); 
-						if(message.equals(getmessage))
+						if(message.equals(getmessage)&&(rs.getString(4)).toString().equals("1"))
 						{
 							rs.close();
-							return true;
+							return "success1";
+						}
+						else if(message.equals(getmessage)&&(rs.getString(4)).toString().equals("2"))
+						{
+							rs.close();
+							return "success2";
 						}
 							
 					} 
 				
 					rs.close(); 
-					return false;
+					return "false";
 			
 		}catch (Exception e){
 			e.printStackTrace();
-			return false;
+			return "false";
 		}finally{
 			if(null !=s)
 				try {

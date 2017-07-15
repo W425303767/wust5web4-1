@@ -26,12 +26,14 @@ function get(){
 	  {
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 		{
-		  	if(xmlhttp.responseText=="success")
-		  		window.location="http://localhost:8080/wust5web4-1/html/index1.html";
+		  	if(xmlhttp.responseText=="success1")
+		  		window.location="../html/index1.html";
+		  	if(xmlhttp.responseText=="success2")
+		  		window.location="../html/pages/tables/managerpage.html";
 			document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
 		}
 	  }	
-    xmlhttp.open("POST","/wust5web4-1/servlet/myservlet?username="+username.value+"&psw="+psw.value,true);
+    xmlhttp.open("POST","../servlet/myservlet?username="+username.value+"&psw="+psw.value,true);
 	xmlhttp.send();
 }
 
@@ -99,11 +101,38 @@ function StuSend(){
 		
 	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
 		{
-		  if(xmlhttp.responseText=="success")
+		  if(xmlhttp.responseText=="success1")
 		  		window.location="../html/pages/tables/formdata.html";
 		}
 	  }
-    xmlhttp.open("GET","../servlet/Registe?year="+year+month+day+"&where="+where+"&num="+num,true);
+    xmlhttp.open("GET","../servlet/Registe?year="+year+month+day+"&where="+where+"&num="+num+"&checkid=1",true);
 	xmlhttp.send();
 	
-	}
+}
+function ManagerSend(){
+	
+	var message={'where':'','StuNo':''};
+	var xmlhttp = createxmlhttp();
+	var nowdate = new Date();
+	var year = nowdate.getFullYear();
+	var month = nowdate.getMonth()+1;
+	if( month < 10)
+		month = "0"+month;
+	var day = nowdate.getDate();
+	if(day<10)
+		day="0"+day;
+	var where = document.getElementById("position").selectedIndex;
+	var num = document.getElementById("num_manage").value;
+	
+	xmlhttp.onreadystatechange=function()
+	  {
+		
+	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+		{
+		  if(xmlhttp.responseText=="success2")
+		  		window.location="../html/pages/tables/managerdata.html";
+		}
+	  }
+  xmlhttp.open("POST","../servlet/Registe?year="+year+month+day+"&where="+where+"&num="+num+"&checkid=2",true);
+	xmlhttp.send();
+}

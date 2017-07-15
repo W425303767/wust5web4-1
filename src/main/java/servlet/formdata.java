@@ -82,6 +82,7 @@ public class formdata extends HttpServlet {
 				messages.data.put(message);
 				} 
 			
+			
 			rs.close(); 
 			s.close(); 
 			conn.commit(); 

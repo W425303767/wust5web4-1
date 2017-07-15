@@ -62,6 +62,7 @@ public class Registe extends HttpServlet {
 		String year =request.getParameter("year");
 		String whereid = request.getParameter("where");
 		String num = request.getParameter("num");
+		String checkid =request.getParameter("checkid");
 		String where="";
 		
 		int nownum=0;
@@ -83,13 +84,13 @@ public class Registe extends HttpServlet {
 			StuNo.put("where",where);
 			StuNo.put("StuNo",stunum);
 			message.put(StuNo);
-			save(where,stunum);
+			save(where,stunum,checkid);
 			session.setAttribute("username", StuNo);
 			flag= true;
 		}
 		
 		if(flag)
-		out.print("success");
+		out.print("success1");
 		else
 		out.print("failed");
 		out.flush();
@@ -114,38 +115,40 @@ public class Registe extends HttpServlet {
 		HttpSession session = request.getSession();
 		
 		JSONArray  message= new JSONArray();
+		boolean flag=false;
 		String year =request.getParameter("year");
 		String whereid = request.getParameter("where");
 		String num = request.getParameter("num");
+		String checkid = request.getParameter("checkid");
 		String where="";
 		
-		int newnum=0;
+		int nownum=0;
 		for(int i=0;i<num.length();i++)
-			newnum = newnum*10+(num.charAt(i)-'0');
-		
+			nownum = nownum*10+(num.charAt(i)-'0');
+
 		if(whereid.equals("1"))
-			where="计算机学院";
+			where="宿管";
 		if(whereid.equals("2"))
-			where="外国语学院";
-		if(whereid.equals("3"))
-			where="其他学院";
+			where="后勤";
 		
-		
-		for(int i=0;i<newnum;i++)
+		for(int i=0;i<nownum;i++)
 		{
 			String stunum = year+whereid+""+(i+1);
 			JSONObject StuNo =new JSONObject();
 			StuNo.put("where",where);
 			StuNo.put("StuNo",stunum);
 			message.put(StuNo);
-			save(where,stunum);
+			save(where,stunum,checkid);
 			session.setAttribute("username", StuNo);
-			
+			flag=true;
 		}
 		
-		out.println(message.toString());
-		out.flush();
-		out.close();
+		if(flag)
+			out.print("success2");
+			else
+			out.print("failed");
+			out.flush();
+			out.close();
 	}
 
 	/**
@@ -167,7 +170,7 @@ public class Registe extends HttpServlet {
 		
 		s = conn.createStatement(); 
 		s.execute("drop table testtable");
-		s.execute("create table testtable(place varchar(40), StuNo char(10) ,Psw char(20))");		
+		s.execute("create table testtable(place varchar(40), StuNo char(10) ,Psw char(20),Checkid char)");		
 		return true;
 		
 		}catch(Exception e){
@@ -192,7 +195,7 @@ public class Registe extends HttpServlet {
 		
 	}
 	
-	public boolean save(String where,String StuNo)throws ServletException, IOException {
+	public boolean save(String where,String StuNo,String checkid)throws ServletException, IOException {
 		//This code uses for saving numbers informations
 		
 		Connection conn = null; 
@@ -202,7 +205,7 @@ public class Registe extends HttpServlet {
 			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");  
 			
 			s = conn.createStatement(); 
-			s.execute("insert into testtable values('"+where+"','"+StuNo+"','"+StuNo+"')"); 
+			s.execute("insert into testtable values('"+where+"','"+StuNo+"','"+StuNo+"','"+checkid+"')"); 
 			conn.commit(); 
 			
 			return true;
