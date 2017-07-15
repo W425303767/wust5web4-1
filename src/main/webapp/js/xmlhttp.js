@@ -124,6 +124,7 @@ function ManagerSend(){
 	var where = document.getElementById("position").selectedIndex;
 	var num = document.getElementById("num_manage").value;
 	
+	
 	xmlhttp.onreadystatechange=function()
 	  {
 		

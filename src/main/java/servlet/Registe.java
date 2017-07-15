@@ -207,7 +207,7 @@ public class Registe extends HttpServlet {
 		
 		s = conn.createStatement(); 
 		s.execute("drop table testtable");
-		s.execute("create table testtable(place char(40), StuNo char(10) ,Psw char(20),Checkid char)");		
+		s.execute("create table testtable(place char(40), StuNo char(20) ,Psw char(20),Checkid char)");		
 		return true;
 		
 		}catch(Exception e){
