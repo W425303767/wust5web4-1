@@ -57,9 +57,29 @@ public class formdata extends HttpServlet {
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		response.setCharacterEncoding("UTF-8");
-
+		String  Sstart = request.getParameter("start");
+		String  Slength =request.getParameter("length");
+		String  Sdraw = request.getParameter("draw");
+		int start =0;
+		int length=0;
+		int draw=0;
+		
+		if(!"".equals(Slength)&&Slength!=null){
+			length = Integer.parseInt(Slength);
+		}
+		
+		if(!"".equals(Sstart)&&Sstart!=null){
+			start = Integer.parseInt(Sstart);
+		}
+		
+		if(Sdraw.equals(""))
+			draw=0;
+		else draw=Integer.parseInt(Sdraw)+1;
 		
 		returndata messages = new returndata();
+		messages.length=length;
+		messages.start=start;
+		messages.draw=draw;
 		Connection conn = null; 
 		Statement  s = null;
 		try { 
@@ -71,7 +91,9 @@ public class formdata extends HttpServlet {
 			ResultSet rs = s.executeQuery( 
 			"SELECT * FROM testtable ORDER BY StuNo"); 
 			
-			while(rs.next()) { 
+			for(int i=start;i<start+length;i++){
+				if(rs.next())
+				{
 				JSONObject message = new JSONObject();
 				StringBuilder builder = new StringBuilder(rs.getString("place")); 
 				if(rs.getString("checkid").contentEquals("1")){
@@ -82,6 +104,20 @@ public class formdata extends HttpServlet {
 					message.put("psw", builder.toString());
 					messages.data.put(message);
 				}
+				else break;
+			}
+			
+		/*	while(rs.next()) { 
+				JSONObject message = new JSONObject();
+				StringBuilder builder = new StringBuilder(rs.getString("place")); 
+				if(rs.getString("checkid").contentEquals("1")){
+					message.put("place", builder.toString());
+					builder = new StringBuilder(rs.getString("StuNo"));
+					message.put("num", builder.toString());
+					builder=new StringBuilder(rs.getString("Psw"));
+					message.put("psw", builder.toString());
+					messages.data.put(message);
+				}*/
 				
 			} 
 			

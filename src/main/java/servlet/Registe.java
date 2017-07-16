@@ -57,27 +57,65 @@ public class Registe extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		HttpSession session = request.getSession();
+		Connection conn = null; 
+		Statement s = null;
+		
+		
 		boolean flag=false;
 		JSONArray  message= new JSONArray();
 		String year =request.getParameter("year");
 		String whereid = request.getParameter("where");
 		String num = request.getParameter("num");
 		String checkid =request.getParameter("checkid");
-		String where="";
-		int nownum=0;
 		
-		if(whereid.equals("0")||num.equals("0")||checkid.equals("0"))
+		if(whereid.equals("0")||num.equals("0")||checkid.equals(""))
 		{
-			out.print("failed");
+			out.print("miss messages");
 			out.flush();
 			out.close();
 		}
-		
 		else
 		{
+			String where="";
+			String oldnum="";
+			int nums=0;
+			int nownum=0;
 			for(int i=0;i<num.length();i++)
 				nownum = nownum*10+(num.charAt(i)-'0');
 				
+try { 
+				
+				conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");  
+				s = conn.createStatement(); 
+				ResultSet rs =s.executeQuery("select count(*) from testtable");
+				
+				while(rs.next()) { 
+					oldnum = rs.getString(1);
+				} 
+				
+				for(int i=0;i<oldnum.length();i++)
+					nums = nums*10+(oldnum.charAt(i)-'0');
+				conn.commit(); 
+			   }catch (Exception e){
+				e.printStackTrace();
+			}finally{
+				if(null!=s)
+					try {
+						s.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				if( null != conn)
+					try {
+						conn.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			}
+			
+			
 			if(whereid.equals("1"))
 				where="CS";
 			if(whereid.equals("2"))
@@ -85,17 +123,16 @@ public class Registe extends HttpServlet {
 			if(whereid.equals("3"))
 				where="Others";
 			
-			
 			for(int i=0;i<nownum;i++)
 			{
-				String stunum = year+whereid+(i+1);
+				String stunum = year+whereid+""+(i+1+nums);
 				JSONObject StuNo =new JSONObject();
 				StuNo.put("where",where);
 				StuNo.put("StuNo",stunum);
 				message.put(StuNo);
 				save(where,stunum,checkid);
 				session.setAttribute("username", StuNo);
-				flag= true;
+				flag=true;
 			}
 			
 			if(flag)

@@ -2,6 +2,11 @@ package servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -45,35 +50,83 @@ public class index1 extends HttpServlet {
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		response.setContentType("text/html");
-		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
+		response.setCharacterEncoding("UTF-8");
+		String  Sstart = request.getParameter("start");
+		String  Slength =request.getParameter("length");
 		
-		JSONObject a = new JSONObject();
-		a.put("buildnum", "1");
-		a.put("housenum", "1");
-		a.put("grades","1");
-		a.put("members","1");
-		a.put("cherker","1");
-		a.put("time","1");
+		int start =0;
+		int length=0;
+		for(int i=0;i<Sstart.length();i++)
+			start = start*10+(Sstart.charAt(i)-'0');
+		for(int i=0;i<Slength.length();i++)
+			length=length*10+(Slength.charAt(i)-'0');
 		
-		JSONObject ab= new JSONObject();
-		ab.put("buildnum", "2");
-		ab.put("housenum", "2");
-		ab.put("grades","2");
-		ab.put("members","2");
-		ab.put("cherker","2");
-		ab.put("time","2");
+		returndata messages = new returndata();
+		messages.length=length;
+		messages.start=start;
+		
+		Connection conn = null; 
+		Statement  s = null;
+		try { 
+			
+			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true"); 
+			s = conn.createStatement(); 
+			
+			// list the two records 
+			ResultSet rs = s.executeQuery( 
+			"SELECT * FROM testtable ORDER BY StuNo"); 
+			
+			for(int i=start;i<start+length;i++){
+				if(rs.next())
+				{
+				JSONObject message = new JSONObject();
+				StringBuilder builder = new StringBuilder(rs.getString("place")); 
+				if(rs.getString("checkid").contentEquals("1")){
+					message.put("place", builder.toString());
+					builder = new StringBuilder(rs.getString("StuNo"));
+					message.put("num", builder.toString());
+					builder=new StringBuilder(rs.getString("Psw"));
+					message.put("psw", builder.toString());
+					messages.data.put(message);
+				}
+				else break;
+			}
 		//你的数据库--JSONObject
-		
-		returndata information = new returndata();
-		information.data.put(ab);
-		information.data.put(a);
-		JSONObject aaa = new JSONObject();
-		aaa.put("data", information.data);
-		out.println(aaa.toString());
-
+				
+			} 
+			
+			
+			rs.close(); 
+			s.close(); 
+			conn.commit(); 
+			conn.close(); 
+			
+		}catch (Exception e){
+			e.printStackTrace();
+		}finally{
+			if( null != s)
+				try {
+					s.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			if(null != conn)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+		}
+		JSONObject returnmessage = new JSONObject();
+		returnmessage.put("data", messages.data);
+		out.print(returnmessage.toString());
 		out.flush();
 		out.close();
+	
 	}
 
 	/**

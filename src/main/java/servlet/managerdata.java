@@ -49,7 +49,6 @@ public class managerdata extends HttpServlet {
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		response.setCharacterEncoding("UTF-8");
-
 		
 		returndata messages = new returndata();
 		Connection conn = null; 
