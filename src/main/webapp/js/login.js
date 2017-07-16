@@ -29,6 +29,7 @@ $(function(){
 	$('input[name=password]').blur(function(){
 		val=this.value;
 		if (!val.length) {
+			$('.error2').hide();
 			$('.null2').show();
 		}
 		else if (val.length<6||val.length>20) {
@@ -43,7 +44,7 @@ $(function(){
 		}
 	});
 
-	$('form').click(function(){
+	$('.log-btn').click(function(){
 		$('input.auth').blur();
 
 		tot=0;
