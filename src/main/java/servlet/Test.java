@@ -2,11 +2,8 @@ package servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.wust5.util.DBUtil;
+import com.wust5.util.Numbers;
 
 public class Test extends HttpServlet {
 
@@ -51,12 +51,11 @@ public class Test extends HttpServlet {
 		Connection conn = null; 
 		Statement  s = null;
 		try { // load the driver 
-			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance(); 
+			DBUtil.loadDriver();
 			System.out.println("Load the embedded driver"); 
 			
-			Properties props = new Properties(); 
-			//create and connect the database named helloDB 
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true", props); 
+			//create and connect the database named wust5DB 
+			conn=DBUtil.getConnection();
 			out.println("create and connect to wust5DB"); 
 			
 			s = conn.createStatement(); 
@@ -79,21 +78,8 @@ public class Test extends HttpServlet {
 		}catch (Exception e){
 			e.printStackTrace();
 		}finally{
-			if( null != s)
-				try {
-					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			if(null != conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			
+			DBUtil.closeQuietly(s);
+			DBUtil.closeQuietly(conn);
 		}
 		out.flush();
 		out.close();
@@ -122,9 +108,7 @@ public class Test extends HttpServlet {
 		String num = request.getParameter("num");
 		String where="";
 		
-		int newnum=0;
-		for(int i=0;i<num.length();i++)
-			newnum = newnum*10+(num.charAt(i)-'0');
+		int newnum = Numbers.parseDigits(num);
 		year=year.replace("-", "");
 		if(whereid.equals("0"))
 			where="计算机学院";
@@ -152,11 +136,9 @@ public class Test extends HttpServlet {
 		
 		String message = "insert into testtable values";
 		try { // load the driver 
-			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance(); 
-			Connection conn = null; 
-			Properties props = new Properties(); 
+			DBUtil.loadDriver();
 			//create and connect the database named wust5DB 
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true", props); 
+			Connection conn=DBUtil.getConnection();
 			conn.setAutoCommit(false); 
 			
 			//insert records 

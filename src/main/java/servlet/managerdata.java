@@ -2,11 +2,6 @@ package servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -14,9 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
-
-import Model.returndata;
+import com.wust5.util.DBUtil;
+import com.wust5.util.Responses;
+import com.wust5.util.StudentRecords;
 
 public class managerdata extends HttpServlet {
 
@@ -30,7 +25,7 @@ public class managerdata extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		// Put your code here
 		super.init(config);
-		if(connDB()==false)
+		if(DBUtil.openDatabase()==false)
 			destroy();
 	}
 
@@ -49,64 +44,8 @@ public class managerdata extends HttpServlet {
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		response.setCharacterEncoding("UTF-8");
-		
-		returndata messages = new returndata();
-		Connection conn = null; 
-		Statement  s = null;
-		try { 
-			
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true"); 
-			s = conn.createStatement(); 
-			
-			// list the two records 
-			ResultSet rs = s.executeQuery( 
-			"SELECT * FROM testtable ORDER BY StuNo"); 
-			
-			while(rs.next()) { 
-				JSONObject message = new JSONObject();
-				StringBuilder builder = new StringBuilder(rs.getString("place")); 
-				if(rs.getString("checkid").contentEquals("2")){
-					message.put("place", builder.toString());
-					builder = new StringBuilder(rs.getString("StuNo"));
-					message.put("num", builder.toString());
-					builder=new StringBuilder(rs.getString("Psw"));
-					message.put("psw", builder.toString());
-					messages.data.put(message);
-				}
-				
-			} 
-			
-			
-			rs.close(); 
-			s.close(); 
-			conn.commit(); 
-			conn.close(); 
-			
-		}catch (Exception e){
-			e.printStackTrace();
-		}finally{
-			if( null != s)
-				try {
-					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			if(null != conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			
-		}
-		JSONObject returnmessage = new JSONObject();
-		returnmessage.put("data", messages.data);
-		out.print(returnmessage.toString());
-		out.flush();
-		out.close();
-	
+
+		Responses.writeJsonData(out, StudentRecords.findAllByCheckid("2"));
 	}
 
 	/**
@@ -121,52 +60,7 @@ public class managerdata extends HttpServlet {
 		 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		response.setContentType("text/html");
-		PrintWriter out = response.getWriter();
-		out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
-		out.println("<HTML>");
-		out.println("  <HEAD><TITLE>A Servlet</TITLE></HEAD>");
-		out.println("  <BODY>");
-		out.print("    This is ");
-		out.print(this.getClass());
-		out.println(", using the POST method");
-		out.println("  </BODY>");
-		out.println("</HTML>");
-		out.flush();
-		out.close();
+		Responses.writeServletInfoPage(response, this.getClass(), "POST");
 	}
 
-public boolean connDB(){
-		
-		Connection conn = null;
-		Statement  s = null;
-		try{
-			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance(); 
-			
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");  
-			
-			// create a table and insert two records 
-			s = conn.createStatement(); 
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}finally{
-			if(null!=s)
-				try {
-					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			if(null!=conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		}
-		return true;
-	}
-	
 }

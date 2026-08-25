@@ -2,21 +2,17 @@ package servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.crypto.Data;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.wust5.util.Numbers;
+import com.wust5.util.Responses;
+import com.wust5.util.StudentRecords;
 
 import Model.returndata;
 
@@ -52,81 +48,13 @@ public class index1 extends HttpServlet {
 		response.setContentType("text/html");
 		PrintWriter out = response.getWriter();
 		response.setCharacterEncoding("UTF-8");
-		String  Sstart = request.getParameter("start");
-		String  Slength =request.getParameter("length");
-		
-		int start =0;
-		int length=0;
-		for(int i=0;i<Sstart.length();i++)
-			start = start*10+(Sstart.charAt(i)-'0');
-		for(int i=0;i<Slength.length();i++)
-			length=length*10+(Slength.charAt(i)-'0');
-		
+
 		returndata messages = new returndata();
-		messages.length=length;
-		messages.start=start;
-		
-		Connection conn = null; 
-		Statement  s = null;
-		try { 
-			
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true"); 
-			s = conn.createStatement(); 
-			
-			// list the two records 
-			ResultSet rs = s.executeQuery( 
-			"SELECT * FROM testtable ORDER BY StuNo"); 
-			
-			for(int i=start;i<start+length;i++){
-				if(rs.next())
-				{
-				JSONObject message = new JSONObject();
-				StringBuilder builder = new StringBuilder(rs.getString("place")); 
-				if(rs.getString("checkid").contentEquals("1")){
-					message.put("place", builder.toString());
-					builder = new StringBuilder(rs.getString("StuNo"));
-					message.put("num", builder.toString());
-					builder=new StringBuilder(rs.getString("Psw"));
-					message.put("psw", builder.toString());
-					messages.data.put(message);
-				}
-				else break;
-			}
-		//你的数据库--JSONObject
-				
-			} 
-			
-			
-			rs.close(); 
-			s.close(); 
-			conn.commit(); 
-			conn.close(); 
-			
-		}catch (Exception e){
-			e.printStackTrace();
-		}finally{
-			if( null != s)
-				try {
-					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			if(null != conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			
-		}
-		JSONObject returnmessage = new JSONObject();
-		returnmessage.put("data", messages.data);
-		out.print(returnmessage.toString());
-		out.flush();
-		out.close();
-	
+		messages.start = Numbers.parseDigits(request.getParameter("start"));
+		messages.length = Numbers.parseDigits(request.getParameter("length"));
+		messages.data = StudentRecords.findPageByCheckid("1", messages.start, messages.length);
+
+		Responses.writeJsonData(out, messages.data);
 	}
 
 	/**
