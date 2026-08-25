@@ -1,16 +1,12 @@
 package servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -19,257 +15,107 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.json.*;
+import com.wust5.util.PasswordUtil;
 
 public class Registe extends HttpServlet {
 
-	/**
-		 * Constructor of the object.
-		 */
-	
 	public Registe() {
 		super();
-		
 	}
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
-		// TODO Auto-generated method stub
 		super.init(config);
 		if(createtable()==false)
 			destroy();
-		
 	}
-	
-	/**
-		 * The doGet method of the servlet. <br>
-		 *
-		 * This method is called when a form has its tag value method equals to get.
-		 * 
-		 * @param request the request send by the client to the server
-		 * @param response the response send by the server to the client
-		 * @throws ServletException if an error occurred
-		 * @throws IOException if an error occurred
-		 */
+
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		response.setContentType("text/html");
-		response.setCharacterEncoding("UTF-8");
-		PrintWriter out = response.getWriter();
-		HttpSession session = request.getSession();
-		Connection conn = null; 
-		Statement s = null;
-		
-		
-		boolean flag=false;
-		JSONArray  message= new JSONArray();
-		String year =request.getParameter("year");
-		String whereid = request.getParameter("where");
-		String num = request.getParameter("num");
-		String checkid =request.getParameter("checkid");
-		
-		if(whereid.equals("0")||num.equals("0")||checkid.equals(""))
-		{
-			out.print("miss messages");
-			out.flush();
-			out.close();
-		}
-		else
-		{
-			String where="";
-			String oldnum="";
-			int nums=0;
-			int nownum=0;
-			for(int i=0;i<num.length();i++)
-				nownum = nownum*10+(num.charAt(i)-'0');
-				
-try { 
-				
-				conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");  
-				s = conn.createStatement(); 
-				ResultSet rs =s.executeQuery("select count(*) from testtable");
-				
-				while(rs.next()) { 
-					oldnum = rs.getString(1);
-				} 
-				
-				for(int i=0;i<oldnum.length();i++)
-					nums = nums*10+(oldnum.charAt(i)-'0');
-				conn.commit(); 
-			   }catch (Exception e){
-				e.printStackTrace();
-			}finally{
-				if(null!=s)
-					try {
-						s.close();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				if( null != conn)
-					try {
-						conn.close();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			}
-			
-			
-			if(whereid.equals("1"))
-				where="CS";
-			if(whereid.equals("2"))
-				where="FL";
-			if(whereid.equals("3"))
-				where="Others";
-			
-			for(int i=0;i<nownum;i++)
-			{
-				String stunum = year+whereid+""+(i+1+nums);
-				JSONObject StuNo =new JSONObject();
-				StuNo.put("where",where);
-				StuNo.put("StuNo",stunum);
-				message.put(StuNo);
-				save(where,stunum,checkid);
-				session.setAttribute("username", StuNo);
-				flag=true;
-			}
-			
-			if(flag)
-			out.print("success1");
-			else
-			out.print("failed");
-			out.flush();
-			out.close();
-		}
-		
+		response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 	}
 
-	/**
-		 * The doPost method of the servlet. <br>
-		 *
-		 * This method is called when a form has its tag value method equals to post.
-		 * 
-		 * @param request the request send by the client to the server
-		 * @param response the response send by the server to the client
-		 * @throws ServletException if an error occurred
-		 * @throws IOException if an error occurred
-		 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 		response.setContentType("text/html");
 		response.setCharacterEncoding("UTF-8");
-		PrintWriter out = response.getWriter();
-		HttpSession session = request.getSession();
-		Connection conn = null; 
-		Statement s = null;
-		
-		JSONArray  message= new JSONArray();
-		boolean flag=false;
-		String year =request.getParameter("year");
+		String year = request.getParameter("year");
 		String whereid = request.getParameter("where");
 		String num = request.getParameter("num");
 		String checkid = request.getParameter("checkid");
-		
-		if(whereid.equals("0")||num.equals("0")||checkid.equals(""))
+
+		if(year == null || whereid == null || num == null || checkid == null
+				|| !year.matches("\\d{8}") || (!"1".equals(checkid) && !"2".equals(checkid)))
 		{
-			out.print("miss messages");
-			out.flush();
-			out.close();
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "failed");
+			return;
 		}
-		else
+
+		int whereValue;
+		int number;
+		try {
+			whereValue = Integer.parseInt(whereid);
+			number = Integer.parseInt(num);
+		} catch (NumberFormatException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "failed");
+			return;
+		}
+		if((checkid.equals("1") && (!"1".equals(whereid) && !"2".equals(whereid) && !"3".equals(whereid)))
+				|| (checkid.equals("2") && (!"1".equals(whereid) && !"2".equals(whereid)))
+				|| number < 1 || number > 100)
 		{
-			String where="";
-			String oldnum="";
-			int nums=0;
-			int nownum=0;
-			
-			for(int i=0;i<num.length();i++)
-				nownum = nownum*10+(num.charAt(i)-'0');
-			
-			
-			try { 
-				
-				conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");  
-				s = conn.createStatement(); 
-				ResultSet rs =s.executeQuery("select count(*) from testtable");
-				
-				while(rs.next()) { 
-					oldnum = rs.getString(1);
-				} 
-				
-				for(int i=0;i<oldnum.length();i++)
-					nums = nums*10+(oldnum.charAt(i)-'0');
-				conn.commit(); 
-			   }catch (Exception e){
-				e.printStackTrace();
-			}finally{
-				if(null!=s)
-					try {
-						s.close();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				if( null != conn)
-					try {
-						conn.close();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			}
-			
-			if(whereid.equals("1"))
-				where="housemaster";
-			if(whereid.equals("2"))
-				where="logistics";
-			
-			for(int i=0;i<nownum;i++)
-			{
-				String stunum = year+whereid+""+(i+1+nums);
-				JSONObject StuNo =new JSONObject();
-				StuNo.put("where",where);
-				StuNo.put("StuNo",stunum);
-				message.put(StuNo);
-				save(where,stunum,checkid);
-				session.setAttribute("username", StuNo);
-				flag=true;
-			}
-			
-			if(flag)
-				out.print("success2");
-				else
-				out.print("failed");
-				out.flush();
-				out.close();
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "failed");
+			return;
 		}
-		
-		
+
+		String where = checkid.equals("1")
+				? new String[] {"CS", "FL", "Others"}[whereValue - 1]
+				: new String[] {"housemaster", "logistics"}[whereValue - 1];
+		int oldnum = 0;
+		try (Connection conn = DriverManager.getConnection("jdbc:derby:wust5DB;create=true");
+				Statement s = conn.createStatement();
+				ResultSet rs = s.executeQuery("select count(*) from testtable")) {
+			if(rs.next())
+				oldnum = rs.getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "failed");
+			return;
+		}
+
+		boolean flag = true;
+		for(int i=0;i<number;i++)
+		{
+			String stunum = year+whereid+""+(i+1+oldnum);
+			if(!save(where,stunum,checkid)) {
+				flag = false;
+				break;
+			}
+		}
+
+		if(flag) {
+			HttpSession session = request.getSession();
+			session.setAttribute("username", year+whereid+""+(number+oldnum));
+			session.setAttribute("role", checkid);
+			response.getWriter().print(checkid.equals("1") ? "success1" : "success2");
+		} else {
+			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			response.getWriter().print("failed");
+		}
 	}
 
-	/**
-		 * Initialization of the servlet. <br>
-		 *
-		 * @throws ServletException if an error occurs
-		 */
-
 	public boolean createtable(){
-		
-		
-		Connection conn = null; 
+		Connection conn = null;
 		Statement s = null;
 		try{
-			
-		Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance(); 
-		
-		conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");  
-		
-		s = conn.createStatement(); 
-		s.execute("drop table testtable");
-		s.execute("create table testtable(place varchar(40), StuNo varchar(20) ,Psw varchar(20),Checkid char)");		
-		return true;
-		
+			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
+			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");
+			s = conn.createStatement();
+			s.execute("create table testtable(place varchar(40), StuNo varchar(20) ,Psw varchar(140),Checkid char)");
+			return true;
+		}catch(SQLException e){
+			if("X0Y32".equals(e.getSQLState()))
+				return true;
+			e.printStackTrace();
+			return false;
 		}catch(Exception e){
 			e.printStackTrace();
 			return false;
@@ -278,55 +124,29 @@ try {
 				try {
 					s.close();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			if(null!=conn)
 				try {
 					conn.close();
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		}
-		
 	}
-	
+
 	public boolean save(String where,String StuNo,String checkid)throws ServletException, IOException {
-		//This code uses for saving numbers informations
-		
-		Connection conn = null; 
-		Statement s = null;
-		try { 
-			
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");  
-			
-			s = conn.createStatement(); 
-			s.execute("insert into testtable values('"+where+"','"+StuNo+"','"+StuNo+"','"+checkid+"')"); 
-			conn.commit(); 
-			
+		try (Connection conn = DriverManager.getConnection("jdbc:derby:wust5DB;create=true");
+				PreparedStatement s = conn.prepareStatement("insert into testtable values(?,?,?,?)")) {
+			s.setString(1, where);
+			s.setString(2, StuNo);
+			s.setString(3, PasswordUtil.hash(StuNo));
+			s.setString(4, checkid);
+			s.executeUpdate();
 			return true;
-			
 		}catch (Exception e){
 			e.printStackTrace();
 			return false;
-		}finally{
-			if(null!=s)
-				try {
-					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			if( null != conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 		}
 	}
-	
-	
 }

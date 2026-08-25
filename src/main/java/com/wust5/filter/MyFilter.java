@@ -12,47 +12,50 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.json.JSONObject;
-
 public class MyFilter implements Filter {
 
 	public FilterConfig config;
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		// TODO Auto-generated method stub
-		String urls=filterConfig.getInitParameter(null);
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		// TODO Auto-generated method stub
 		HttpServletRequest hrequest = (HttpServletRequest)request;
 		HttpServletResponse hresp=(HttpServletResponse) response;
 		HttpSession session = hrequest.getSession();
-		String url=hrequest.getRequestURI();
-		
-		JSONObject username=(JSONObject)session.getAttribute("username");
+		String path=hrequest.getRequestURI().substring(hrequest.getContextPath().length());
+		boolean isPublic = path.equals("/html/login.html")
+				|| path.equals("/html/Register.html")
+				|| path.equals("/html/RegisterNew.html")
+				|| path.equals("/servlet/myservlet")
+				|| path.equals("/servlet/Registe");
+		if(isPublic) {
+			chain.doFilter(hrequest, response);
+			return;
+		}
 
-	/*	if (hrequest.getRequestURI() != null &&hrequest.getRequestURI().equals(logonStrings)) {// 对登录页面不进行过滤
-            chain.doFilter(request, response);
-            return;
-        }*/
-		if(url.indexOf("/login.html")>-1||url.indexOf("/Register.html")>-1||url.indexOf("/RegisterNew.html")>-1){
-			chain.doFilter(hrequest, response);
+		Object username = session.getAttribute("username");
+		if(username == null) {
+			if(path.startsWith("/servlet/"))
+				hresp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+			else
+				hresp.sendRedirect(hrequest.getContextPath()+"/html/login.html");
+			return;
 		}
-		else if(username==null)
-			hresp.sendRedirect(hrequest.getContextPath()+"/html/login.html");
-		else {
-			chain.doFilter(hrequest, response);
+
+		boolean managerOnly = path.equals("/servlet/managerdata")
+				|| path.contains("/pages/tables/managerdata.html")
+				|| path.contains("/pages/tables/managerpage.html");
+		if(managerOnly && !"2".equals(String.valueOf(session.getAttribute("role")))) {
+			hresp.sendError(HttpServletResponse.SC_FORBIDDEN);
+			return;
 		}
-		
+		chain.doFilter(hrequest, response);
 	}
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
-
 	}
-
 }

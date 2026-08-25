@@ -55,12 +55,14 @@ public class index1 extends HttpServlet {
 		String  Sstart = request.getParameter("start");
 		String  Slength =request.getParameter("length");
 		
-		int start =0;
-		int length=0;
-		for(int i=0;i<Sstart.length();i++)
-			start = start*10+(Sstart.charAt(i)-'0');
-		for(int i=0;i<Slength.length();i++)
-			length=length*10+(Slength.charAt(i)-'0');
+		int start =parseInt(Sstart, 0);
+		int length=parseInt(Slength, 0);
+		if(start < 0)
+			start = 0;
+		if(length < 0)
+			length = 0;
+		if(length > 1000)
+			length = 1000;
 		
 		returndata messages = new returndata();
 		messages.length=length;
@@ -86,8 +88,6 @@ public class index1 extends HttpServlet {
 					message.put("place", builder.toString());
 					builder = new StringBuilder(rs.getString("StuNo"));
 					message.put("num", builder.toString());
-					builder=new StringBuilder(rs.getString("Psw"));
-					message.put("psw", builder.toString());
 					messages.data.put(message);
 				}
 				else break;
@@ -127,6 +127,16 @@ public class index1 extends HttpServlet {
 		out.flush();
 		out.close();
 	
+	}
+
+	private static int parseInt(String value, int fallback) {
+		if(value == null || value.trim().isEmpty())
+			return fallback;
+		try {
+			return Integer.parseInt(value);
+		} catch (NumberFormatException e) {
+			return fallback;
+		}
 	}
 
 	/**

@@ -33,26 +33,9 @@ function get(){
 			document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
 		}
 	  }	
-    xmlhttp.open("POST","../servlet/myservlet?username="+username.value+"&psw="+psw.value,true);
-	xmlhttp.send();
-}
-
-
-function post(){
-	
-	var xmlhttp=createxmlhttp();
-	var username = document.getElementById("user");
-	var psw = document.getElementById("psw");
-	xmlhttp.onreadystatechange=function()
-	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
-		{
-			document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
-		}
-	  
-	  }	
-	xmlhttp.open("GET","/wust5web4-1/servlet/Test?username="+username.value+"&password="+psw.value,true);
-	xmlhttp.send();
+    xmlhttp.open("POST","../servlet/myservlet",true);
+	xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	xmlhttp.send("username="+encodeURIComponent(username.value)+"&psw="+encodeURIComponent(psw.value));
 }
 
 function getinfo(){
@@ -75,8 +58,10 @@ function getinfo(){
 			document.getElementById("numlist").innerHTML+=message[i].where+message[i].StuNo+"\n";
 		}
 	  }
-    xmlhttp.open("POST","/wust5web4-1/servlet/Registe?year="+year+"&where="+where+"&num="+num,true);
-	xmlhttp.send();
+    xmlhttp.open("POST","../servlet/Registe",true);
+	xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	xmlhttp.send("year="+encodeURIComponent(year)+"&where="+encodeURIComponent(where)
+		+"&num="+encodeURIComponent(num)+"&checkid="+encodeURIComponent("1"));
 	
 }
 
@@ -106,8 +91,10 @@ function StuSend(){
 			}
 		  
 	  }
-	  xmlhttp.open("GET","../servlet/Registe?year="+year+month+day+"&where="+where+"&num="+num+"&checkid=1",true);
-			xmlhttp.send();
+	  xmlhttp.open("POST","../servlet/Registe",true);
+	  xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	  xmlhttp.send("year="+encodeURIComponent(year+month+day)+"&where="+encodeURIComponent(where)
+	  		+"&num="+encodeURIComponent(num)+"&checkid="+encodeURIComponent("1"));
 	  
 }
 function ManagerSend(){
@@ -135,7 +122,9 @@ function ManagerSend(){
 		}
 	}
 	
-	xmlhttp.open("POST","../servlet/Registe?year="+year+month+day+"&where="+where+"&num="+num+"&checkid=2",true);
-	xmlhttp.send();
+	xmlhttp.open("POST","../servlet/Registe",true);
+	xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	xmlhttp.send("year="+encodeURIComponent(year+month+day)+"&where="+encodeURIComponent(where)
+			+"&num="+encodeURIComponent(num)+"&checkid="+encodeURIComponent("2"));
 	  
 }
