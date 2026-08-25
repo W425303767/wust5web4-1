@@ -69,8 +69,6 @@ public class managerdata extends HttpServlet {
 					message.put("place", builder.toString());
 					builder = new StringBuilder(rs.getString("StuNo"));
 					message.put("num", builder.toString());
-					builder=new StringBuilder(rs.getString("Psw"));
-					message.put("psw", builder.toString());
 					messages.data.put(message);
 				}
 				

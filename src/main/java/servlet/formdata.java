@@ -60,21 +60,15 @@ public class formdata extends HttpServlet {
 		String  Sstart = request.getParameter("start");
 		String  Slength =request.getParameter("length");
 		String  Sdraw = request.getParameter("draw");
-		int start =0;
-		int length=0;
-		int draw=0;
-		
-		if(!"".equals(Slength)&&Slength!=null){
-			length = Integer.parseInt(Slength);
-		}
-		
-		if(!"".equals(Sstart)&&Sstart!=null){
-			start = Integer.parseInt(Sstart);
-		}
-		
-		if(Sdraw.equals(""))
-			draw=0;
-		else draw=Integer.parseInt(Sdraw)+1;
+		int start =parseInt(Sstart, 0);
+		int length=parseInt(Slength, 0);
+		int draw=parseInt(Sdraw, 0)+1;
+		if(start < 0)
+			start = 0;
+		if(length < 0)
+			length = 0;
+		if(length > 1000)
+			length = 1000;
 		
 		returndata messages = new returndata();
 		messages.length=length;
@@ -100,24 +94,10 @@ public class formdata extends HttpServlet {
 					message.put("place", builder.toString());
 					builder = new StringBuilder(rs.getString("StuNo"));
 					message.put("num", builder.toString());
-					builder=new StringBuilder(rs.getString("Psw"));
-					message.put("psw", builder.toString());
 					messages.data.put(message);
 				}
 				else break;
 			}
-			
-		/*	while(rs.next()) { 
-				JSONObject message = new JSONObject();
-				StringBuilder builder = new StringBuilder(rs.getString("place")); 
-				if(rs.getString("checkid").contentEquals("1")){
-					message.put("place", builder.toString());
-					builder = new StringBuilder(rs.getString("StuNo"));
-					message.put("num", builder.toString());
-					builder=new StringBuilder(rs.getString("Psw"));
-					message.put("psw", builder.toString());
-					messages.data.put(message);
-				}*/
 				
 			} 
 			
@@ -153,6 +133,16 @@ public class formdata extends HttpServlet {
 		out.close();
 	
 		
+	}
+
+	private static int parseInt(String value, int fallback) {
+		if(value == null || value.trim().isEmpty())
+			return fallback;
+		try {
+			return Integer.parseInt(value);
+		} catch (NumberFormatException e) {
+			return fallback;
+		}
 	}
 
 	/**
