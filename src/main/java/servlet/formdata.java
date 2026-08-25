@@ -7,7 +7,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -21,6 +20,8 @@ import Model.returndata;
 
 public class formdata extends HttpServlet {
 
+	private static final String DB_URL = "jdbc:derby:wust5DB;create=true";
+
 	/**
 		 * Constructor of the object.
 		 */
@@ -29,10 +30,8 @@ public class formdata extends HttpServlet {
 	}
 
 	public void init(ServletConfig config) throws ServletException {
-		// Put your code here
 		super.init(config);
-		if(connDB()==false)
-			destroy();
+		connDB();
 	}
 	/**
 		 * Destruction of the servlet. <br>
@@ -54,105 +53,60 @@ public class formdata extends HttpServlet {
 		 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		response.setContentType("text/html");
-		PrintWriter out = response.getWriter();
-		response.setCharacterEncoding("UTF-8");
-		String  Sstart = request.getParameter("start");
-		String  Slength =request.getParameter("length");
-		String  Sdraw = request.getParameter("draw");
-		int start =0;
-		int length=0;
-		int draw=0;
-		
-		if(!"".equals(Slength)&&Slength!=null){
-			length = Integer.parseInt(Slength);
+		int start;
+		int length;
+		int draw;
+		try {
+			start = RequestParams.optInt(request, "start", 0);
+			length = RequestParams.optInt(request, "length", 0);
+			draw = RequestParams.optInt(request, "draw", -1) + 1;
+		} catch (IllegalArgumentException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+			return;
 		}
-		
-		if(!"".equals(Sstart)&&Sstart!=null){
-			start = Integer.parseInt(Sstart);
-		}
-		
-		if(Sdraw.equals(""))
-			draw=0;
-		else draw=Integer.parseInt(Sdraw)+1;
-		
+
 		returndata messages = new returndata();
-		messages.length=length;
-		messages.start=start;
-		messages.draw=draw;
-		Connection conn = null; 
-		Statement  s = null;
-		try { 
-			
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true"); 
-			s = conn.createStatement(); 
-			
-			// list the two records 
-			ResultSet rs = s.executeQuery( 
-			"SELECT * FROM testtable ORDER BY StuNo"); 
-			
-			for(int i=start;i<start+length;i++){
-				if(rs.next())
-				{
-				JSONObject message = new JSONObject();
-				StringBuilder builder = new StringBuilder(rs.getString("place")); 
-				if(rs.getString("checkid").contentEquals("1")){
-					message.put("place", builder.toString());
-					builder = new StringBuilder(rs.getString("StuNo"));
-					message.put("num", builder.toString());
-					builder=new StringBuilder(rs.getString("Psw"));
-					message.put("psw", builder.toString());
-					messages.data.put(message);
-				}
-				else break;
-			}
-			
-		/*	while(rs.next()) { 
-				JSONObject message = new JSONObject();
-				StringBuilder builder = new StringBuilder(rs.getString("place")); 
-				if(rs.getString("checkid").contentEquals("1")){
-					message.put("place", builder.toString());
-					builder = new StringBuilder(rs.getString("StuNo"));
-					message.put("num", builder.toString());
-					builder=new StringBuilder(rs.getString("Psw"));
-					message.put("psw", builder.toString());
-					messages.data.put(message);
-				}*/
-				
-			} 
-			
-			
-			rs.close(); 
-			s.close(); 
-			conn.commit(); 
-			conn.close(); 
-			
-		}catch (Exception e){
-			e.printStackTrace();
-		}finally{
-			if( null != s)
+		messages.length = length;
+		messages.start = start;
+		messages.draw = draw;
+		try {
+			Connection conn = DriverManager.getConnection(DB_URL);
+			try {
+				Statement s = conn.createStatement();
 				try {
+					ResultSet rs = s.executeQuery("SELECT * FROM testtable ORDER BY StuNo");
+					try {
+						for (int i = start; i < start + length; i++) {
+							if (!rs.next())
+								break;
+							if (!rs.getString("checkid").contentEquals("1"))
+								continue;
+							JSONObject message = new JSONObject();
+							message.put("place", rs.getString("place"));
+							message.put("num", rs.getString("StuNo"));
+							message.put("psw", rs.getString("Psw"));
+							messages.data.put(message);
+						}
+					} finally {
+						rs.close();
+					}
+				} finally {
 					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
-			if(null != conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			
+			} finally {
+				conn.close();
+			}
+		} catch (SQLException e) {
+			throw new ServletException("Unable to read form data from " + DB_URL, e);
 		}
+
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
 		JSONObject returnmessage = new JSONObject();
 		returnmessage.put("data", messages.data);
+		PrintWriter out = response.getWriter();
 		out.print(returnmessage.toString());
 		out.flush();
-		out.close();
-	
-		
 	}
 
 	/**
@@ -182,37 +136,19 @@ public class formdata extends HttpServlet {
 		out.close();
 	}
 
-public boolean connDB(){
-		
-		Connection conn = null;
-		Statement  s = null;
-		try{
-			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance(); 
-			
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");  
-			
-			// create a table and insert two records 
-			s = conn.createStatement(); 
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}finally{
-			if(null!=s)
-				try {
-					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			if(null!=conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+	public void connDB() throws ServletException {
+
+		try {
+			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
+			Connection conn = DriverManager.getConnection(DB_URL);
+			try {
+				conn.createStatement().close();
+			} finally {
+				conn.close();
+			}
+		} catch (Exception e) {
+			throw new ServletException("Unable to open the database " + DB_URL, e);
 		}
-		return true;
 	}
-	
+
 }

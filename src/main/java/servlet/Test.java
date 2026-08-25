@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,6 +18,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Test extends HttpServlet {
+
+	private static final String DB_URL = "jdbc:derby:wust5DB;create=true";
 
 	/**
 		 * Constructor of the object.
@@ -47,56 +50,40 @@ public class Test extends HttpServlet {
 
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html");
-		PrintWriter out = response.getWriter();
-		Connection conn = null; 
-		Statement  s = null;
-		try { // load the driver 
-			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance(); 
-			System.out.println("Load the embedded driver"); 
-			
-			Properties props = new Properties(); 
-			//create and connect the database named helloDB 
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true", props); 
-			out.println("create and connect to wust5DB"); 
-			
-			s = conn.createStatement(); 
-			
-			// list the two records 
-			ResultSet rs = s.executeQuery( 
-			"SELECT * FROM testtable ORDER BY StuNo"); 
-			out.println("message is:");
-			while(rs.next()) { 
-				StringBuilder builder = new StringBuilder(rs.getString(2)); 
-				builder.append(rs.getInt(3));
-				out.println(builder.toString()); 
-				} 
-			
-			rs.close(); 
-			s.close(); 
-			conn.commit(); 
-			conn.close(); 
-			
-		}catch (Exception e){
-			e.printStackTrace();
-		}finally{
-			if( null != s)
+		StringBuilder body = new StringBuilder();
+		try {
+			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
+			log("Load the embedded driver");
+
+			Properties props = new Properties();
+			//create and connect the database named wust5DB
+			Connection conn = DriverManager.getConnection(DB_URL, props);
+			body.append("create and connect to wust5DB\n");
+			try {
+				Statement s = conn.createStatement();
 				try {
+					ResultSet rs = s.executeQuery("SELECT * FROM testtable ORDER BY StuNo");
+					try {
+						body.append("message is:\n");
+						while(rs.next()) {
+							body.append(rs.getString(2)).append(rs.getInt(3)).append('\n');
+						}
+					} finally {
+						rs.close();
+					}
+				} finally {
 					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
-			if(null != conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			
+			} finally {
+				conn.close();
+			}
+		} catch (Exception e) {
+			throw new ServletException("Unable to list the rows of 'testtable' in " + DB_URL, e);
 		}
+
+		PrintWriter out = response.getWriter();
+		out.print(body.toString());
 		out.flush();
-		out.close();
 	}
 
 	/**
@@ -113,64 +100,68 @@ public class Test extends HttpServlet {
 
 		response.setContentType("text/html");
 		response.setCharacterEncoding("UTF-8");
-		PrintWriter out = response.getWriter();
-		
-		
-		JSONArray  message= new JSONArray();
-		String year =request.getParameter("year");
-		String whereid = request.getParameter("where");
-		String num = request.getParameter("num");
+
+		String year;
+		String whereid;
+		int newnum;
+		try {
+			year = RequestParams.require(request, "year").replace("-", "");
+			whereid = RequestParams.require(request, "where");
+			newnum = RequestParams.requireInt(request, "num");
+		} catch (IllegalArgumentException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+			return;
+		}
+
 		String where="";
-		
-		int newnum=0;
-		for(int i=0;i<num.length();i++)
-			newnum = newnum*10+(num.charAt(i)-'0');
-		year=year.replace("-", "");
 		if(whereid.equals("0"))
 			where="计算机学院";
 		if(whereid.equals("1"))
 			where="其他学院";
-		
-		
-		for(int i=0;i<newnum;i++)
-		{
-			String stunum = year+whereid+""+(i+1);
-			JSONObject StuNo =new JSONObject();
-			StuNo.put("where",where);
-			StuNo.put("StuNo",stunum);
-			message.put(StuNo);
-			save(where,stunum);
+
+		JSONArray  message= new JSONArray();
+		try {
+			for(int i=0;i<newnum;i++)
+			{
+				String stunum = year+whereid+""+(i+1);
+				JSONObject StuNo =new JSONObject();
+				StuNo.put("where",where);
+				StuNo.put("StuNo",stunum);
+				save(where,stunum);
+				message.put(StuNo);
+			}
+		} catch (SQLException e) {
+			throw new ServletException("Unable to save " + newnum + " row(s) into " + DB_URL, e);
 		}
-		
+
+		PrintWriter out = response.getWriter();
 		out.println(message.toString());
 		out.flush();
-		out.close();
 	}
 
-	public boolean save(String where,String StuNo)throws ServletException, IOException {
+	public void save(String where,String StuNo) throws SQLException {
 		//This code uses for saving numbers informations
-		
-		String message = "insert into testtable values";
-		try { // load the driver 
-			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance(); 
-			Connection conn = null; 
-			Properties props = new Properties(); 
-			//create and connect the database named wust5DB 
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true", props); 
-			conn.setAutoCommit(false); 
-			
-			//insert records 
-			Statement s = conn.createStatement(); 
-			s.execute(message+"('"+where+"','"+StuNo+"','"+StuNo+"')"); 
-			 
-			s.close();  
-			conn.commit(); 
-			conn.close(); 
-			return true;
-			
-		}catch (Exception e){
-			e.printStackTrace();
-			return false;
+
+		Connection conn = DriverManager.getConnection(DB_URL, new Properties());
+		try {
+			conn.setAutoCommit(false);
+
+			//insert records
+			PreparedStatement s = conn.prepareStatement("insert into testtable values(?,?,?)");
+			try {
+				s.setString(1, where);
+				s.setString(2, StuNo);
+				s.setString(3, StuNo);
+				s.executeUpdate();
+				conn.commit();
+			} catch (SQLException e) {
+				conn.rollback();
+				throw e;
+			} finally {
+				s.close();
+			}
+		} finally {
+			conn.close();
 		}
 	}
 	

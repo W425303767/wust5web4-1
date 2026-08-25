@@ -20,6 +20,8 @@ import Model.returndata;
 
 public class managerdata extends HttpServlet {
 
+	private static final String DB_URL = "jdbc:derby:wust5DB;create=true";
+
 	/**
 		 * Constructor of the object.
 		 */
@@ -28,10 +30,8 @@ public class managerdata extends HttpServlet {
 	}
 
 	public void init(ServletConfig config) throws ServletException {
-		// Put your code here
 		super.init(config);
-		if(connDB()==false)
-			destroy();
+		connDB();
 	}
 
 	/**
@@ -46,67 +46,43 @@ public class managerdata extends HttpServlet {
 		 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		response.setContentType("text/html");
-		PrintWriter out = response.getWriter();
-		response.setCharacterEncoding("UTF-8");
-		
 		returndata messages = new returndata();
-		Connection conn = null; 
-		Statement  s = null;
-		try { 
-			
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true"); 
-			s = conn.createStatement(); 
-			
-			// list the two records 
-			ResultSet rs = s.executeQuery( 
-			"SELECT * FROM testtable ORDER BY StuNo"); 
-			
-			while(rs.next()) { 
-				JSONObject message = new JSONObject();
-				StringBuilder builder = new StringBuilder(rs.getString("place")); 
-				if(rs.getString("checkid").contentEquals("2")){
-					message.put("place", builder.toString());
-					builder = new StringBuilder(rs.getString("StuNo"));
-					message.put("num", builder.toString());
-					builder=new StringBuilder(rs.getString("Psw"));
-					message.put("psw", builder.toString());
-					messages.data.put(message);
-				}
-				
-			} 
-			
-			
-			rs.close(); 
-			s.close(); 
-			conn.commit(); 
-			conn.close(); 
-			
-		}catch (Exception e){
-			e.printStackTrace();
-		}finally{
-			if( null != s)
+		try {
+			Connection conn = DriverManager.getConnection(DB_URL);
+			try {
+				Statement s = conn.createStatement();
 				try {
+					ResultSet rs = s.executeQuery("SELECT * FROM testtable ORDER BY StuNo");
+					try {
+						while (rs.next()) {
+							if (!rs.getString("checkid").contentEquals("2"))
+								continue;
+							JSONObject message = new JSONObject();
+							message.put("place", rs.getString("place"));
+							message.put("num", rs.getString("StuNo"));
+							message.put("psw", rs.getString("Psw"));
+							messages.data.put(message);
+						}
+					} finally {
+						rs.close();
+					}
+				} finally {
 					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
-			if(null != conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			
+			} finally {
+				conn.close();
+			}
+		} catch (SQLException e) {
+			throw new ServletException("Unable to read manager data from " + DB_URL, e);
 		}
+
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
 		JSONObject returnmessage = new JSONObject();
 		returnmessage.put("data", messages.data);
+		PrintWriter out = response.getWriter();
 		out.print(returnmessage.toString());
 		out.flush();
-		out.close();
-	
 	}
 
 	/**
@@ -136,37 +112,19 @@ public class managerdata extends HttpServlet {
 		out.close();
 	}
 
-public boolean connDB(){
-		
-		Connection conn = null;
-		Statement  s = null;
-		try{
-			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance(); 
-			
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");  
-			
-			// create a table and insert two records 
-			s = conn.createStatement(); 
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}finally{
-			if(null!=s)
-				try {
-					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			if(null!=conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+	public void connDB() throws ServletException {
+
+		try {
+			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
+			Connection conn = DriverManager.getConnection(DB_URL);
+			try {
+				conn.createStatement().close();
+			} finally {
+				conn.close();
+			}
+		} catch (Exception e) {
+			throw new ServletException("Unable to open the database " + DB_URL, e);
 		}
-		return true;
 	}
-	
+
 }

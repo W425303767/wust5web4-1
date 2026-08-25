@@ -7,20 +7,19 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.crypto.Data;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import Model.returndata;
 
 public class index1 extends HttpServlet {
+
+	private static final String DB_URL = "jdbc:derby:wust5DB;create=true";
 
 	/**
 		 * Constructor of the object.
@@ -49,84 +48,58 @@ public class index1 extends HttpServlet {
 		 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		response.setContentType("text/html");
-		PrintWriter out = response.getWriter();
-		response.setCharacterEncoding("UTF-8");
-		String  Sstart = request.getParameter("start");
-		String  Slength =request.getParameter("length");
-		
-		int start =0;
-		int length=0;
-		for(int i=0;i<Sstart.length();i++)
-			start = start*10+(Sstart.charAt(i)-'0');
-		for(int i=0;i<Slength.length();i++)
-			length=length*10+(Slength.charAt(i)-'0');
-		
-		returndata messages = new returndata();
-		messages.length=length;
-		messages.start=start;
-		
-		Connection conn = null; 
-		Statement  s = null;
-		try { 
-			
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true"); 
-			s = conn.createStatement(); 
-			
-			// list the two records 
-			ResultSet rs = s.executeQuery( 
-			"SELECT * FROM testtable ORDER BY StuNo"); 
-			
-			for(int i=start;i<start+length;i++){
-				if(rs.next())
-				{
-				JSONObject message = new JSONObject();
-				StringBuilder builder = new StringBuilder(rs.getString("place")); 
-				if(rs.getString("checkid").contentEquals("1")){
-					message.put("place", builder.toString());
-					builder = new StringBuilder(rs.getString("StuNo"));
-					message.put("num", builder.toString());
-					builder=new StringBuilder(rs.getString("Psw"));
-					message.put("psw", builder.toString());
-					messages.data.put(message);
-				}
-				else break;
-			}
-		//你的数据库--JSONObject
-				
-			} 
-			
-			
-			rs.close(); 
-			s.close(); 
-			conn.commit(); 
-			conn.close(); 
-			
-		}catch (Exception e){
-			e.printStackTrace();
-		}finally{
-			if( null != s)
-				try {
-					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			if(null != conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			
+		int start;
+		int length;
+		try {
+			start = RequestParams.requireInt(request, "start");
+			length = RequestParams.requireInt(request, "length");
+		} catch (IllegalArgumentException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+			return;
 		}
+
+		returndata messages = new returndata();
+		messages.length = length;
+		messages.start = start;
+
+		try {
+			Connection conn = DriverManager.getConnection(DB_URL);
+			try {
+				Statement s = conn.createStatement();
+				try {
+					ResultSet rs = s.executeQuery("SELECT * FROM testtable ORDER BY StuNo");
+					try {
+						for (int i = start; i < start + length; i++) {
+							if (!rs.next())
+								break;
+							if (!rs.getString("checkid").contentEquals("1"))
+								continue;
+							JSONObject message = new JSONObject();
+							message.put("place", rs.getString("place"));
+							message.put("num", rs.getString("StuNo"));
+							message.put("psw", rs.getString("Psw"));
+							messages.data.put(message);
+						}
+					} finally {
+						rs.close();
+					}
+				} finally {
+					s.close();
+				}
+			} finally {
+				conn.close();
+			}
+		} catch (SQLException e) {
+			throw new ServletException("Unable to read index data from " + DB_URL, e);
+		}
+
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
 		JSONObject returnmessage = new JSONObject();
 		returnmessage.put("data", messages.data);
+		PrintWriter out = response.getWriter();
 		out.print(returnmessage.toString());
 		out.flush();
-		out.close();
-	
 	}
 
 	/**

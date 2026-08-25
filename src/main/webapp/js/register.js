@@ -10,9 +10,12 @@ $(document).ready(function () {
                     type:"post",
                     url:"",
                     dataType:"json",
-                    data:{major:vlaue,num:num},
+                    data:{major:value,num:num},
                     success:function (msg) {
                         location.href="../html/result.html";
+                    },
+                    error:function (xhr) {
+                        alert("Student registration failed (HTTP "+xhr.status+" "+xhr.statusText+")");
                     }
                 });
             }
@@ -31,6 +34,9 @@ $(document).ready(function () {
                     data:{val:val,number:number},
                     success:function(msg){
                         location.href="../html/result.html";
+                    },
+                    error:function (xhr) {
+                        alert("Manager registration failed (HTTP "+xhr.status+" "+xhr.statusText+")");
                     }
                 });
             }

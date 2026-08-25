@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -16,22 +15,27 @@ import javax.servlet.http.HttpServletResponse;
 
 public class myservlet extends HttpServlet {
 
-	
+	private static final String DB_URL = "jdbc:derby:wust5DB;create=true";
+
 	@Override
 	public void init(ServletConfig config) throws ServletException {
-		// TODO Auto-generated method stub
 		super.init(config);
-		if(connDB()==false)
-			destroy();
+		connDB();
 	}
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		resp.setContentType("UTF-8");
+		String username;
+		String psw;
+		try {
+			username = RequestParams.require(req, "username");
+			psw = RequestParams.require(req, "psw");
+		} catch (IllegalArgumentException e) {
+			resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+			return;
+		}
 		PrintWriter out = resp.getWriter();
-		String username = req.getParameter("username");
-		String psw = req.getParameter("psw");
 		//print jsom //print html 
 		
 		if(username.equals("12345")&&psw.equals("123456"))
@@ -61,11 +65,24 @@ public class myservlet extends HttpServlet {
 		
 		resp.setContentType("text/html");
 		resp.setCharacterEncoding("UTF-8");
+		String username;
+		String psw;
+		try {
+			username = RequestParams.require(req, "username");
+			psw = RequestParams.require(req, "psw");
+		} catch (IllegalArgumentException e) {
+			resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+			return;
+		}
+
+		String message;
+		try {
+			message = checkmessage(username, psw);
+		} catch (SQLException e) {
+			throw new ServletException("Unable to check the credentials of '" + username + "' against " + DB_URL, e);
+		}
+
 		PrintWriter out = resp.getWriter();
-		String username = req.getParameter("username");
-		String psw = req.getParameter("psw");
-		String message =checkmessage(username,psw);
-		
 		if(message.equals("success1")){
 			out.print("success1");
 		}
@@ -74,6 +91,7 @@ public class myservlet extends HttpServlet {
 			out.print("success2");
 		else
 			out.println(" error: your print"+username+psw);
+		out.flush();
 	}
 
 	@Override
@@ -83,55 +101,35 @@ public class myservlet extends HttpServlet {
 		// Put your code here
 	}
 	
-	public boolean connDB(){
+	public void connDB() throws ServletException {
 		
-		Connection conn = null;
-		Statement  s = null;
 		try{
 			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance(); 
-			
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");  
-			
-			// create a table and insert two records 
-			s = conn.createStatement(); 
-			
+			Connection conn = DriverManager.getConnection(DB_URL);
+			try {
+				conn.createStatement().close();
+			} finally {
+				conn.close();
+			}
 		}catch(Exception e){
-			e.printStackTrace();
-		}finally{
-			if(null!=s)
-				try {
-					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			if(null!=conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			throw new ServletException("Unable to open the database " + DB_URL, e);
 		}
-		return true;
 	}
 	
-	public String checkmessage(String username,String password){
+	public String checkmessage(String username,String password) throws SQLException {
 		
-		Connection conn = null;
-		Statement s =null;
 		String message=username+password;
 		String flag="false";
-		try { 
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true"); 
-			s= conn.createStatement(); 
-			
-			ResultSet rs = s.executeQuery( "SELECT * FROM testtable ORDER BY StuNo"); 
-					while(rs.next()) { 
-						String getmessage;
-						StringBuilder builder = new StringBuilder(rs.getString(2)); 
+		Connection conn = DriverManager.getConnection(DB_URL);
+		try {
+			Statement s = conn.createStatement();
+			try {
+				ResultSet rs = s.executeQuery("SELECT * FROM testtable ORDER BY StuNo");
+				try {
+					while(rs.next()) {
+						StringBuilder builder = new StringBuilder(rs.getString(2));
 						builder.append(rs.getInt(3));
-						getmessage=builder.toString(); 
+						String getmessage = builder.toString();
 						if(message.equals(getmessage)&&(rs.getString(4)).toString().equals("1"))
 						{
 							flag= "success1";
@@ -141,28 +139,16 @@ public class myservlet extends HttpServlet {
 							flag= "success2";
 						}
 					}
-			return flag;	
-
-		}catch (Exception e){
-			e.printStackTrace();
-			return "false";
-		}finally{
-			if(null !=s)
-				try {
-					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					return flag;
+				} finally {
+					rs.close();
 				}
-			if( null != conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			} finally {
+				s.close();
+			}
+		} finally {
+			conn.close();
 		}
-		
 	}
 	
 }

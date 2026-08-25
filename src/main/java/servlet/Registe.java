@@ -4,13 +4,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -19,9 +16,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.json.*;
+import org.json.JSONObject;
 
 public class Registe extends HttpServlet {
+
+	private static final String DB_URL = "jdbc:derby:wust5DB;create=true";
+
+	/** Derby SQL state for "the table does not exist". */
+	private static final String NO_SUCH_TABLE = "42Y55";
 
 	/**
 		 * Constructor of the object.
@@ -34,11 +36,8 @@ public class Registe extends HttpServlet {
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
-		// TODO Auto-generated method stub
 		super.init(config);
-		if(createtable()==false)
-			destroy();
-		
+		createtable();
 	}
 	
 	/**
@@ -53,96 +52,7 @@ public class Registe extends HttpServlet {
 		 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		response.setContentType("text/html");
-		response.setCharacterEncoding("UTF-8");
-		PrintWriter out = response.getWriter();
-		HttpSession session = request.getSession();
-		Connection conn = null; 
-		Statement s = null;
-		
-		
-		boolean flag=false;
-		JSONArray  message= new JSONArray();
-		String year =request.getParameter("year");
-		String whereid = request.getParameter("where");
-		String num = request.getParameter("num");
-		String checkid =request.getParameter("checkid");
-		
-		if(whereid.equals("0")||num.equals("0")||checkid.equals(""))
-		{
-			out.print("miss messages");
-			out.flush();
-			out.close();
-		}
-		else
-		{
-			String where="";
-			String oldnum="";
-			int nums=0;
-			int nownum=0;
-			for(int i=0;i<num.length();i++)
-				nownum = nownum*10+(num.charAt(i)-'0');
-				
-try { 
-				
-				conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");  
-				s = conn.createStatement(); 
-				ResultSet rs =s.executeQuery("select count(*) from testtable");
-				
-				while(rs.next()) { 
-					oldnum = rs.getString(1);
-				} 
-				
-				for(int i=0;i<oldnum.length();i++)
-					nums = nums*10+(oldnum.charAt(i)-'0');
-				conn.commit(); 
-			   }catch (Exception e){
-				e.printStackTrace();
-			}finally{
-				if(null!=s)
-					try {
-						s.close();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				if( null != conn)
-					try {
-						conn.close();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			}
-			
-			
-			if(whereid.equals("1"))
-				where="CS";
-			if(whereid.equals("2"))
-				where="FL";
-			if(whereid.equals("3"))
-				where="Others";
-			
-			for(int i=0;i<nownum;i++)
-			{
-				String stunum = year+whereid+""+(i+1+nums);
-				JSONObject StuNo =new JSONObject();
-				StuNo.put("where",where);
-				StuNo.put("StuNo",stunum);
-				message.put(StuNo);
-				save(where,stunum,checkid);
-				session.setAttribute("username", StuNo);
-				flag=true;
-			}
-			
-			if(flag)
-			out.print("success1");
-			else
-			out.print("failed");
-			out.flush();
-			out.close();
-		}
-		
+		registe(request, response, "success1", true);
 	}
 
 	/**
@@ -157,95 +67,78 @@ try {
 		 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+		registe(request, response, "success2", false);
+	}
+
+	/**
+	 * Registers <code>num</code> accounts and answers <code>successMessage</code>
+	 * once every account has been stored. A registration that could not be stored
+	 * answers HTTP 500 rather than reporting success.
+	 */
+	private void registe(HttpServletRequest request, HttpServletResponse response, String successMessage,
+			boolean student) throws ServletException, IOException {
+
 		response.setContentType("text/html");
 		response.setCharacterEncoding("UTF-8");
-		PrintWriter out = response.getWriter();
 		HttpSession session = request.getSession();
-		Connection conn = null; 
-		Statement s = null;
-		
-		JSONArray  message= new JSONArray();
-		boolean flag=false;
-		String year =request.getParameter("year");
-		String whereid = request.getParameter("where");
-		String num = request.getParameter("num");
-		String checkid = request.getParameter("checkid");
-		
-		if(whereid.equals("0")||num.equals("0")||checkid.equals(""))
-		{
-			out.print("miss messages");
-			out.flush();
-			out.close();
+
+		String year;
+		String whereid;
+		String checkid;
+		int nownum;
+		try {
+			year = RequestParams.require(request, "year");
+			whereid = RequestParams.require(request, "where");
+			checkid = RequestParams.require(request, "checkid");
+			nownum = RequestParams.requireInt(request, "num");
+		} catch (IllegalArgumentException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+			return;
 		}
-		else
-		{
-			String where="";
-			String oldnum="";
-			int nums=0;
-			int nownum=0;
-			
-			for(int i=0;i<num.length();i++)
-				nownum = nownum*10+(num.charAt(i)-'0');
-			
-			
-			try { 
-				
-				conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");  
-				s = conn.createStatement(); 
-				ResultSet rs =s.executeQuery("select count(*) from testtable");
-				
-				while(rs.next()) { 
-					oldnum = rs.getString(1);
-				} 
-				
-				for(int i=0;i<oldnum.length();i++)
-					nums = nums*10+(oldnum.charAt(i)-'0');
-				conn.commit(); 
-			   }catch (Exception e){
-				e.printStackTrace();
-			}finally{
-				if(null!=s)
-					try {
-						s.close();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				if( null != conn)
-					try {
-						conn.close();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			}
-			
-			if(whereid.equals("1"))
-				where="housemaster";
-			if(whereid.equals("2"))
-				where="logistics";
-			
-			for(int i=0;i<nownum;i++)
-			{
-				String stunum = year+whereid+""+(i+1+nums);
-				JSONObject StuNo =new JSONObject();
-				StuNo.put("where",where);
-				StuNo.put("StuNo",stunum);
-				message.put(StuNo);
-				save(where,stunum,checkid);
+
+		if (whereid.equals("0") || nownum == 0) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "miss messages");
+			return;
+		}
+
+		String where = student ? studentPlace(whereid) : managerPlace(whereid);
+		try {
+			int nums = count();
+			for (int i = 0; i < nownum; i++) {
+				String stunum = year + whereid + "" + (i + 1 + nums);
+				JSONObject StuNo = new JSONObject();
+				StuNo.put("where", where);
+				StuNo.put("StuNo", stunum);
+				save(where, stunum, checkid);
 				session.setAttribute("username", StuNo);
-				flag=true;
 			}
-			
-			if(flag)
-				out.print("success2");
-				else
-				out.print("failed");
-				out.flush();
-				out.close();
+		} catch (SQLException e) {
+			throw new ServletException("Unable to register " + nownum + " account(s) in " + DB_URL, e);
 		}
-		
-		
+
+		PrintWriter out = response.getWriter();
+		out.print(successMessage);
+		out.flush();
+	}
+
+	private String studentPlace(String whereid) {
+
+		if (whereid.equals("1"))
+			return "CS";
+		if (whereid.equals("2"))
+			return "FL";
+		if (whereid.equals("3"))
+			return "Others";
+		return "";
+	}
+
+	private String managerPlace(String whereid) {
+
+		if (whereid.equals("1"))
+			return "housemaster";
+		if (whereid.equals("2"))
+			return "logistics";
+		return "";
 	}
 
 	/**
@@ -254,77 +147,76 @@ try {
 		 * @throws ServletException if an error occurs
 		 */
 
-	public boolean createtable(){
-		
-		
-		Connection conn = null; 
-		Statement s = null;
-		try{
-			
-		Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance(); 
-		
-		conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");  
-		
-		s = conn.createStatement(); 
-		s.execute("drop table testtable");
-		s.execute("create table testtable(place varchar(40), StuNo varchar(20) ,Psw varchar(20),Checkid char)");		
-		return true;
-		
-		}catch(Exception e){
-			e.printStackTrace();
-			return false;
-		}finally{
-			if(null!=s)
+	public void createtable() throws ServletException {
+
+		try {
+			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
+			Connection conn = DriverManager.getConnection(DB_URL);
+			try {
+				Statement s = conn.createStatement();
 				try {
+					try {
+						s.execute("drop table testtable");
+					} catch (SQLException e) {
+						// The very first start up has no table to drop yet; anything else is fatal.
+						if (!NO_SUCH_TABLE.equals(e.getSQLState()))
+							throw e;
+					}
+					s.execute("create table testtable(place varchar(40), StuNo varchar(20) ,Psw varchar(20),Checkid char)");
+				} finally {
 					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
-			if(null!=conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			} finally {
+				conn.close();
+			}
+		} catch (Exception e) {
+			throw new ServletException("Unable to create the table 'testtable' in " + DB_URL, e);
 		}
-		
 	}
-	
-	public boolean save(String where,String StuNo,String checkid)throws ServletException, IOException {
+
+	/** @return how many accounts are already stored */
+	public int count() throws SQLException {
+
+		Connection conn = DriverManager.getConnection(DB_URL);
+		try {
+			Statement s = conn.createStatement();
+			try {
+				ResultSet rs = s.executeQuery("select count(*) from testtable");
+				try {
+					return rs.next() ? rs.getInt(1) : 0;
+				} finally {
+					rs.close();
+				}
+			} finally {
+				s.close();
+			}
+		} finally {
+			conn.close();
+		}
+	}
+
+	public void save(String where, String StuNo, String checkid) throws SQLException {
 		//This code uses for saving numbers informations
-		
-		Connection conn = null; 
-		Statement s = null;
-		try { 
-			
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");  
-			
-			s = conn.createStatement(); 
-			s.execute("insert into testtable values('"+where+"','"+StuNo+"','"+StuNo+"','"+checkid+"')"); 
-			conn.commit(); 
-			
-			return true;
-			
-		}catch (Exception e){
-			e.printStackTrace();
-			return false;
-		}finally{
-			if(null!=s)
-				try {
-					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			if( null != conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+
+		Connection conn = DriverManager.getConnection(DB_URL);
+		try {
+			conn.setAutoCommit(false);
+			PreparedStatement s = conn.prepareStatement("insert into testtable values(?,?,?,?)");
+			try {
+				s.setString(1, where);
+				s.setString(2, StuNo);
+				s.setString(3, StuNo);
+				s.setString(4, checkid);
+				s.executeUpdate();
+				conn.commit();
+			} catch (SQLException e) {
+				conn.rollback();
+				throw e;
+			} finally {
+				s.close();
+			}
+		} finally {
+			conn.close();
 		}
 	}
 	
