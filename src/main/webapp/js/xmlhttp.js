@@ -24,13 +24,18 @@ function get(){
 	  
 	xmlhttp.onreadystatechange=function()
 	  {
-	  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+	  if (xmlhttp.readyState==4)
 		{
-		  	if(xmlhttp.responseText=="success1")
-		  		window.location="../html/index1.html";
-		  	if(xmlhttp.responseText=="success2")
-		  		window.location="../html/pages/tables/managerpage.html";
-			document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+			if(xmlhttp.status==200)
+			{
+			  	if(xmlhttp.responseText=="success1")
+			  		window.location="../html/index1.html";
+			  	if(xmlhttp.responseText=="success2")
+			  		window.location="../html/pages/tables/managerpage.html";
+				document.getElementById("myDiv").innerHTML=xmlhttp.responseText;
+			}
+			else
+				document.getElementById("myDiv").innerHTML="用户名或密码错误";
 		}
 	  }	
     xmlhttp.open("POST","../servlet/myservlet",true);

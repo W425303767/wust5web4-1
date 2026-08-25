@@ -49,10 +49,8 @@ public class Registe extends HttpServlet {
 			return;
 		}
 
-		int whereValue;
 		int number;
 		try {
-			whereValue = Integer.parseInt(whereid);
 			number = Integer.parseInt(num);
 		} catch (NumberFormatException e) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "failed");
@@ -66,9 +64,20 @@ public class Registe extends HttpServlet {
 			return;
 		}
 
-		String where = checkid.equals("1")
-				? new String[] {"CS", "FL", "Others"}[whereValue - 1]
-				: new String[] {"housemaster", "logistics"}[whereValue - 1];
+		String where = "";
+		if(checkid.equals("1")) {
+			if(whereid.equals("1"))
+				where = "CS";
+			else if(whereid.equals("2"))
+				where = "FL";
+			else if(whereid.equals("3"))
+				where = "Others";
+		} else if(checkid.equals("2")) {
+			if(whereid.equals("1"))
+				where = "housemaster";
+			else if(whereid.equals("2"))
+				where = "logistics";
+		}
 		int oldnum = 0;
 		try (Connection conn = DriverManager.getConnection("jdbc:derby:wust5DB;create=true");
 				Statement s = conn.createStatement();

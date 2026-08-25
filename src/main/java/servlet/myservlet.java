@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -117,7 +118,7 @@ public class myservlet extends HttpServlet {
 			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true"); 
 			s = conn.prepareStatement("SELECT Psw, Checkid FROM testtable WHERE StuNo = ?");
 			s.setString(1, username);
-			try (java.sql.ResultSet rs = s.executeQuery()) {
+			try (ResultSet rs = s.executeQuery()) {
 				if(rs.next() && PasswordUtil.verify(password, rs.getString("Psw"))) {
 					if("1".equals(rs.getString("Checkid")))
 						flag= "success1";
