@@ -2,17 +2,17 @@ package servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.wust5.util.DBUtil;
+import com.wust5.util.Responses;
 
 public class myservlet extends HttpServlet {
 
@@ -21,7 +21,7 @@ public class myservlet extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		// TODO Auto-generated method stub
 		super.init(config);
-		if(connDB()==false)
+		if(DBUtil.openDatabase()==false)
 			destroy();
 	}
 	
@@ -42,16 +42,9 @@ public class myservlet extends HttpServlet {
 		}
 		else 
 		{
-			out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
-			out.println("<HTML>");
-			out.println("  <HEAD><TITLE>A Servlet</TITLE></HEAD>");
-			out.println("  <BODY>");
-			out.println("	error:your username or password may bu wrong!");
-			out.println("    error: your print username is"+ username+"  password is "+psw);
-			out.println("  </BODY>");
-			out.println("</HTML>");
-			out.flush();
-			out.close();
+			Responses.writeHtmlPage(out,
+					"	error:your username or password may bu wrong!",
+					"    error: your print username is"+ username+"  password is "+psw);
 		}
 	}
 
@@ -83,39 +76,6 @@ public class myservlet extends HttpServlet {
 		// Put your code here
 	}
 	
-	public boolean connDB(){
-		
-		Connection conn = null;
-		Statement  s = null;
-		try{
-			Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance(); 
-			
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true");  
-			
-			// create a table and insert two records 
-			s = conn.createStatement(); 
-			
-		}catch(Exception e){
-			e.printStackTrace();
-		}finally{
-			if(null!=s)
-				try {
-					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			if(null!=conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		}
-		return true;
-	}
-	
 	public String checkmessage(String username,String password){
 		
 		Connection conn = null;
@@ -123,7 +83,7 @@ public class myservlet extends HttpServlet {
 		String message=username+password;
 		String flag="false";
 		try { 
-			conn=DriverManager.getConnection("jdbc:derby:wust5DB;create=true"); 
+			conn=DBUtil.getConnection();
 			s= conn.createStatement(); 
 			
 			ResultSet rs = s.executeQuery( "SELECT * FROM testtable ORDER BY StuNo"); 
@@ -147,20 +107,8 @@ public class myservlet extends HttpServlet {
 			e.printStackTrace();
 			return "false";
 		}finally{
-			if(null !=s)
-				try {
-					s.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			if( null != conn)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			DBUtil.closeQuietly(s);
+			DBUtil.closeQuietly(conn);
 		}
 		
 	}
