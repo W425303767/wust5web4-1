@@ -3,6 +3,12 @@
   <groupId>com.wust5web4-1</groupId>
   <artifactId>wust5web4-1</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <properties>
+  	<maven.compiler.source>1.8</maven.compiler.source>
+  	<maven.compiler.target>1.8</maven.compiler.target>
+  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
   <dependencies>
   <dependency>
   	<groupId>javax.servlet.jsp</groupId>
@@ -26,6 +32,18 @@
   	<groupId>org.apache.derby</groupId>
   	<artifactId>derby</artifactId>
   </dependency>
+  <dependency>
+  	<groupId>junit</groupId>
+  	<artifactId>junit</artifactId>
+  	<version>4.13.2</version>
+  	<scope>test</scope>
+  </dependency>
+  <dependency>
+  	<groupId>org.mockito</groupId>
+  	<artifactId>mockito-core</artifactId>
+  	<version>4.11.0</version>
+  	<scope>test</scope>
+  </dependency>
   </dependencies>
   <packaging>war</packaging>
   <dependencyManagement>
@@ -47,4 +65,33 @@
   		</dependency>
   	</dependencies>
   </dependencyManagement>
+  <build>
+  	<plugins>
+  		<plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-surefire-plugin</artifactId>
+  			<version>3.2.5</version>
+  		</plugin>
+  		<plugin>
+  			<groupId>org.jacoco</groupId>
+  			<artifactId>jacoco-maven-plugin</artifactId>
+  			<version>0.8.11</version>
+  			<executions>
+  				<execution>
+  					<id>prepare-agent</id>
+  					<goals>
+  						<goal>prepare-agent</goal>
+  					</goals>
+  				</execution>
+  				<execution>
+  					<id>report</id>
+  					<phase>test</phase>
+  					<goals>
+  						<goal>report</goal>
+  					</goals>
+  				</execution>
+  			</executions>
+  		</plugin>
+  	</plugins>
+  </build>
 </project>
